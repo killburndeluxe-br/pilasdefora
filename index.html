@@ -1,0 +1,938 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pilas de Fora</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600;700;800&family=Instrument+Sans:wght@400;500;600&family=Noto+Sans+SC:wght@300;400;700&family=Noto+Sans+Devanagari:wght@300;400;600;700&display=swap" rel="stylesheet">
+<style>
+/* Layout: um álbum de moedas. Cada país é um encaixe: cheio (metal) quando está na coleção, tracejado quando falta. */
+:root {
+  --bg: #121315;
+  --surface: #1b1d20;
+  --line: #2e3135;
+  --text: #ece9e3;
+  --muted: #9a978f;
+  --brass: #c9a25e;
+  --brass-deep: #8a6a33;
+  --silver: #c7ccd1;
+  --copper: #b8734a;
+  --display: "Sora", "Noto Sans SC", "Noto Sans Devanagari", "Avenir Next", "Segoe UI", sans-serif;
+  --body: "Instrument Sans", "Noto Sans SC", "Noto Sans Devanagari", "Helvetica Neue", Arial, sans-serif;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--body);
+  font-size: 16px;
+  line-height: 1.5;
+}
+html[lang^="zh"] body *, html[lang="hi"] body * { letter-spacing: 0 !important; }
+html[lang="hi"] body { line-height: 1.7; }
+a { color: var(--brass); }
+:focus-visible { outline: 2px solid var(--brass); outline-offset: 3px; border-radius: 6px; }
+.wrap { max-width: 1120px; margin: 0 auto; padding: 0 20px; }
+
+/* Cabeçalho */
+header.top { border-bottom: 1px solid var(--line); }
+header.top .wrap { display: grid; grid-template-columns: 1fr auto; grid-template-areas: "logo langs" "nav langs"; align-items: start; gap: 8px 16px; padding-top: 16px; padding-bottom: 20px; }
+.logo { grid-area: logo; justify-self: start; font-family: "Sora", "Avenir Next", "Segoe UI", sans-serif; font-weight: 700; font-size: clamp(42px, 6.8vw, 76px); letter-spacing: -0.02em; text-decoration: none; display: inline-flex; align-items: baseline; }
+.logo .pilas { color: var(--brass); }
+.logo .defora { color: var(--text); display: inline-flex; align-items: baseline; }
+.logo svg { color: var(--brass); width: 0.62em; height: 0.62em; margin: 0 0.02em; transform: translateY(0.02em); }
+.langs { grid-area: langs; display: flex; flex-direction: column; gap: 4px; padding-top: 4px; }
+.langs button { min-width: 64px; text-align: center; background: transparent; color: var(--muted); border: 1px solid var(--line); border-radius: 8px; padding: 6px 10px; font: inherit; font-size: 14px; font-weight: 600; cursor: pointer; }
+.langs button:hover { color: var(--text); border-color: var(--muted); }
+.langs button[aria-pressed="true"] { background: var(--brass); color: #1a1407; border-color: var(--brass); }
+nav.top { grid-area: nav; display: flex; flex-direction: column; align-items: flex-start; gap: 2px; }
+nav.top a { color: var(--muted); text-decoration: none; font-family: var(--display); font-weight: 300; font-size: clamp(26px, 4vw, 44px); letter-spacing: -0.03em; line-height: 1.15; }
+nav.top a:hover { color: var(--text); }
+
+/* Abertura */
+.hero { padding: 40px 0 32px; border-top: 1px solid var(--line); display: grid; grid-template-columns: 1.75fr 1fr; gap: 32px; align-items: end; }
+.hero h1 { font-family: var(--display); font-weight: 300; font-size: clamp(34px, 5.4vw, 60px); line-height: 1.08; letter-spacing: -0.035em; margin: 0 0 16px; text-wrap: balance; }
+.hero h1 strong { font-weight: 800; color: var(--brass); white-space: nowrap; }
+.hero p { color: var(--muted); max-width: 52ch; margin: 0; }
+.tally { border: 1px solid var(--line); border-radius: 14px; padding: 20px; background: var(--surface); }
+.tally .num { font-family: "Sora", sans-serif; font-weight: 800; font-size: 56px; letter-spacing: -0.04em; line-height: 1; font-variant-numeric: tabular-nums; }
+.tally .num span { color: var(--muted); font-weight: 300; }
+.tally .lbl { color: var(--muted); margin: 6px 0 14px; }
+.bar { height: 8px; border-radius: 99px; background: var(--line); overflow: hidden; display: flex; }
+.bar i { display: block; height: 100%; }
+.bar .b-temos { background: var(--brass); }
+.bar .b-ganhamos { background: var(--silver); }
+.legend { display: flex; gap: 8px 16px; margin-top: 12px; font-size: 14px; color: var(--muted); flex-wrap: wrap; }
+.legend b { color: var(--text); font-weight: 600; font-variant-numeric: tabular-nums; }
+.dot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 6px; vertical-align: 0; }
+
+/* Redes */
+.social { padding: 40px 0 40px; }
+.social h2, .send h2 { font-family: var(--display); font-weight: 300; font-size: clamp(30px, 4.4vw, 46px); line-height: 1.1; letter-spacing: -0.03em; margin: 0 0 24px; text-wrap: balance; }
+.social h2 strong, .send h2 strong { font-weight: 800; color: var(--brass); }
+.nets { display: flex; gap: 20px; flex-wrap: wrap; align-items: center; }
+.net { color: var(--brass); display: inline-flex; line-height: 0; transition: color .15s, transform .15s; }
+.net svg { width: 28px; height: 28px; }
+a.net:hover { color: #e3c07f; transform: translateY(-2px); }
+.net.soon { cursor: default; }
+.net .sem-icone { font-family: var(--display); font-weight: 700; font-size: 24px; line-height: 1.2; }
+@media (prefers-reduced-motion: reduce) { a.net:hover { transform: none; } }
+
+/* o título fica em linha para a setinha cair logo depois da última palavra */
+.sec-head { margin-bottom: 24px; }
+.sec-head h2 { display: inline; margin: 0 !important; }
+.topo { display: inline-grid; place-items: center; vertical-align: middle; position: relative; top: -0.15em; margin-left: 14px; width: 40px; height: 40px; border-radius: 50%; border: 1px solid var(--brass); background: transparent; color: var(--brass); cursor: pointer; padding: 0; transition: background .15s, color .15s; }
+.topo svg { width: 20px; height: 20px; }
+.topo:hover { background: var(--brass); color: #1a1407; }
+
+/* Filtros */
+.tools { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; padding: 12px 0 20px; position: sticky; top: 0; background: var(--bg); z-index: 5; border-bottom: 1px solid var(--line); }
+.search { flex: 1 1 220px; display: flex; }
+.search input { width: 100%; background: var(--surface); border: 1px solid var(--line); color: var(--text); border-radius: 10px; padding: 10px 14px; font: inherit; }
+.search input::placeholder { color: var(--muted); }
+.chips { display: flex; gap: 6px; flex-wrap: wrap; }
+.chip { background: transparent; color: var(--muted); border: 1px solid var(--line); border-radius: 99px; padding: 7px 13px; font: inherit; font-size: 14px; cursor: pointer; }
+.chip:hover { color: var(--text); border-color: var(--muted); }
+.chip[aria-pressed="true"] { background: var(--text); color: var(--bg); border-color: var(--text); font-weight: 600; }
+
+/* Grade de países (encaixes do álbum) */
+.continent h2 { font-family: var(--display); font-weight: 600; font-size: 20px; letter-spacing: -0.01em; margin: 32px 0 14px; display: flex; gap: 10px; align-items: baseline; }
+.continent h2 small { font-family: var(--body); font-weight: 400; font-size: 14px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 10px; }
+.slot { display: grid; grid-template-columns: 44px 1fr; gap: 12px; align-items: center; text-align: left; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 10px 12px; color: var(--text); font: inherit; cursor: pointer; transition: border-color .15s, transform .15s; }
+.slot:hover { border-color: var(--muted); transform: translateY(-1px); }
+.slot .ring { width: 44px; height: 44px; border-radius: 50%; display: grid; place-items: center; font-size: 22px; border: 2px dashed var(--line); }
+.slot.has .ring { border: 0; }
+.slot.has .ring { background: radial-gradient(circle at 35% 30%, #f3dca6, var(--brass) 45%, var(--brass-deep)); position: relative; }
+.slot .badge { position: absolute; right: -6px; bottom: -4px; min-width: 20px; height: 20px; padding: 0 5px; border-radius: 99px; background: var(--text); color: var(--bg); font-size: 11px; font-weight: 700; display: grid; place-items: center; font-variant-numeric: tabular-nums; }
+.slot .nm { font-weight: 600; font-size: 14px; line-height: 1.25; }
+.slot .cur { color: var(--muted); font-size: 12px; font-variant-numeric: tabular-nums; }
+.slot.missing .nm { color: #cfccc5; }
+.empty { color: var(--muted); padding: 40px 0; }
+
+/* Painel do país */
+.overlay { position: fixed; inset: 0; background: rgba(8, 9, 10, .72); display: none; align-items: flex-start; justify-content: center; padding: 24px 16px; overflow-y: auto; z-index: 20; }
+.overlay.open { display: flex; }
+.panel { background: var(--surface); border: 1px solid var(--line); border-radius: 18px; width: 100%; max-width: 860px; padding: 24px; position: relative; }
+.close { position: absolute; top: 14px; right: 14px; background: transparent; border: 1px solid var(--line); color: var(--text); width: 36px; height: 36px; border-radius: 50%; font-size: 18px; cursor: pointer; }
+.p-head { display: flex; gap: 16px; align-items: center; padding-right: 44px; }
+.p-head .flag { line-height: 0; }
+.p-head .flag img { width: 54px; height: 36px; border-radius: 4px; box-shadow: 0 0 0 1px rgba(255,255,255,.15); }
+.bandeira { display: block; }
+.slot .ring .bandeira { width: 30px; height: 30px; border-radius: 50%; object-fit: cover; box-shadow: 0 0 0 1px rgba(255,255,255,.12); }
+.bandeira.mini { display: inline-block; width: 21px; height: 14px; border-radius: 2px; vertical-align: -2px; box-shadow: 0 0 0 1px rgba(255,255,255,.15); }
+.p-head h3 { font-family: var(--display); font-weight: 700; font-size: 28px; letter-spacing: -0.02em; margin: 0; }
+.p-head .meta { color: var(--muted); font-size: 14px; }
+.pill { display: inline-block; font-size: 12px; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; padding: 3px 9px; border-radius: 99px; margin-left: 8px; vertical-align: 3px; }
+.pill.temos { background: var(--brass); color: #1a1407; }
+.pill.ganhamos { background: var(--silver); color: #15181b; }
+.pill.missing { border: 1px dashed var(--muted); color: var(--muted); }
+.pill.exemplo { background: transparent; border: 1px solid var(--copper); color: var(--copper); }
+
+.tray { margin: 24px 0 8px; padding: 24px 16px 16px; border-radius: 14px; background: #0d0e10; border: 1px solid var(--line); overflow-x: auto; }
+.timeline { display: flex; align-items: stretch; min-width: min-content; }
+.era { display: flex; flex-direction: column; padding: 0 14px; }
+.era .year { margin-top: auto; }
+.era .coins { display: flex; align-items: flex-start; gap: 16px; margin-bottom: 16px; }
+.coin-box { display: flex; flex-direction: column; justify-content: flex-end; align-items: center; gap: 6px; }
+.year { position: relative; border-top: 2px solid var(--line); margin: 14px -14px 0; padding: 10px 14px 0; font-family: "Sora", sans-serif; font-weight: 700; font-size: 15px; color: var(--brass); font-variant-numeric: tabular-nums; }
+.year::before { content: ""; position: absolute; left: 14px; top: -6px; width: 10px; height: 10px; border-radius: 50%; background: var(--brass); }
+.tag { font-size: 11px; color: var(--muted); white-space: nowrap; }
+.tag.gift { color: var(--silver); border: 1px solid var(--line); border-radius: 99px; padding: 1px 7px; white-space: normal; text-align: center; max-width: 140px; }
+.tag.special { color: var(--copper); font-weight: 600; text-transform: uppercase; letter-spacing: .04em; }
+.coin-cell { display: flex; flex-direction: column; align-items: center; gap: 4px; flex: 0 0 auto; }
+.coin-cell .coin { margin-bottom: 4px; }
+.coin { position: relative; filter: drop-shadow(0 2px 4px rgba(0,0,0,.6)); }
+.coin .face { position: absolute; inset: 0; border-radius: 50%; box-shadow: inset 0 0 0 1px rgba(255,255,255,.18); }
+.coin.quadrada .face { border-radius: 10%; }
+.coin.poligono .face { border-radius: 0; box-shadow: none; }
+.coin.foto { filter: none; perspective: 700px; }
+.coin.flip { cursor: pointer; }
+.coin.foto .lados { position: relative; width: 100%; height: 100%; transform-style: preserve-3d; transition: transform .6s cubic-bezier(.3,.7,.3,1); }
+.coin.foto img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; backface-visibility: hidden; -webkit-backface-visibility: hidden; filter: drop-shadow(0 2px 4px rgba(0,0,0,.6)); }
+.coin.foto .verso { transform: rotateY(180deg); }
+.coin.flip:hover .lados, .coin.flip:focus-visible .lados, .coin.flip.virada .lados { transform: rotateY(180deg); }
+.coin.flip:focus-visible { outline-offset: 4px; border-radius: 50%; }
+@media (prefers-reduced-motion: reduce) { .coin.foto .lados { transition: none; } }
+.coin .hole { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); border-radius: 50%; background: #0d0e10; box-shadow: inset 0 1px 2px rgba(0,0,0,.8); }
+.coin .core { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); border-radius: 50%; box-shadow: inset 0 0 0 1px rgba(0,0,0,.25); }
+.coin-cell .v { font-weight: 600; font-size: 13px; white-space: nowrap; }
+.coin-cell .mm { color: var(--muted); font-size: 12px; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.calib-row { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; color: var(--muted); font-size: 13px; }
+.linkbtn { background: none; border: 0; padding: 0; color: var(--brass); font: inherit; font-size: 13px; cursor: pointer; text-decoration: underline; text-underline-offset: 3px; }
+
+.calib { display: none; margin-top: 12px; padding: 16px; border: 1px solid var(--line); border-radius: 12px; }
+.calib.open { display: block; }
+.calib p { margin: 0 0 12px; font-size: 14px; color: var(--muted); max-width: 60ch; }
+.card-outline { border: 2px solid var(--brass); border-radius: 10px; display: grid; place-items: center; color: var(--muted); font-size: 12px; margin-bottom: 12px; }
+.calib input[type=range] { width: 100%; accent-color: var(--brass); }
+.calib .row { display: flex; gap: 12px; align-items: center; margin-top: 8px; }
+
+.textos { display: grid; gap: 14px; margin: 22px 0 0; max-width: 70ch; }
+.txt h4 { margin: 0 0 4px; font-family: var(--display); font-weight: 600; font-size: 16px; }
+.txt h4 .ano { color: var(--brass); font-variant-numeric: tabular-nums; margin-left: 4px; }
+.txt p { margin: 0; white-space: pre-line; }
+.credit { margin: 16px 0 0; color: var(--muted); font-size: 14px; }
+.credit b { color: var(--text); font-weight: 600; }
+.buy { display: flex; flex-direction: column; align-items: flex-start; gap: 10px; margin-top: 20px; padding-top: 18px; border-top: 1px solid var(--line); }
+.btn { display: inline-block; background: var(--brass); color: #1a1407; text-decoration: none; padding: 11px 18px; border-radius: 10px; border: 0; font: inherit; font-weight: 600; cursor: pointer; }
+.btn:hover { filter: brightness(1.08); }
+.btn[disabled] { opacity: .5; cursor: default; filter: none; }
+.btn.ghost { background: transparent; color: var(--text); border: 1px solid var(--line); }
+.buy small { color: var(--muted); font-size: 12px; max-width: 60ch; }
+
+.want { margin: 28px 0 8px; display: grid; grid-template-columns: auto 1fr; gap: 24px; align-items: center; }
+.want .slots { display: flex; gap: 10px; align-items: flex-end; }
+.want .slots i { width: 44px; height: 44px; border-radius: 50%; border: 2px dashed var(--line); display: block; }
+.want .slots i:nth-child(2) { width: 54px; height: 54px; }
+.want .slots i:nth-child(3) { width: 38px; height: 38px; }
+.want p { margin: 0 0 12px; }
+
+/* Envie */
+.send { margin: 72px 0 0; border-top: 1px solid var(--line); padding: 56px 0 24px; display: grid; grid-template-columns: 1fr 1fr; gap: 40px; }
+.send ol { padding-left: 20px; margin: 0; display: grid; gap: 12px; }
+.send ol li::marker { color: var(--brass); font-family: "Sora", sans-serif; font-weight: 700; }
+.address { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 22px; align-self: start; }
+.address .tag { font-size: 12px; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); margin-bottom: 10px; }
+.address address { font-style: normal; font-size: 18px; line-height: 1.55; font-variant-numeric: tabular-nums; margin-bottom: 16px; }
+.address .note { color: var(--muted); font-size: 13px; margin: 12px 0 0; }
+.copied { color: var(--brass); font-size: 13px; margin-left: 10px; }
+
+/* Ranking */
+.ranking { margin: 56px 0 0; border-top: 1px solid var(--line); padding-top: 56px; min-height: 100vh; min-height: 100svh; }
+/* altura mínima: por ser a última seção, sem ela o menu não consegue trazer o ranking para o topo da tela */
+.ranking h2 { font-family: var(--display); font-weight: 300; font-size: clamp(30px, 4.4vw, 46px); line-height: 1.1; letter-spacing: -0.03em; margin: 0 0 24px; text-wrap: balance; }
+.ranking h2 strong { font-weight: 800; color: var(--brass); }
+.tabs { display: flex; gap: 4px; border-bottom: 1px solid var(--line); margin-bottom: 8px; }
+.tabs button { background: transparent; border: 0; border-bottom: 2px solid transparent; color: var(--muted); font: inherit; font-weight: 600; font-size: 16px; padding: 10px 16px; cursor: pointer; margin-bottom: -1px; }
+.tabs button:hover { color: var(--text); }
+.tabs button[aria-selected="true"] { color: var(--text); border-bottom-color: var(--brass); }
+.rank { list-style: none; margin: 0; padding: 0; max-width: 720px; }
+.rank li { display: grid; grid-template-columns: 40px 1fr auto auto; gap: 16px; align-items: center; padding: 12px 0; border-bottom: 1px solid var(--line); }
+.rank li.head { color: var(--muted); font-size: 12px; text-transform: uppercase; letter-spacing: .06em; padding: 8px 0; }
+.rank li.dois { grid-template-columns: 40px 1fr auto; }
+.rank .pos { width: 32px; height: 32px; border-radius: 50%; display: grid; place-items: center; font-family: "Sora", sans-serif; font-weight: 700; font-size: 14px; border: 1px solid var(--line); color: var(--muted); font-variant-numeric: tabular-nums; }
+.rank li:nth-child(2) .pos { background: radial-gradient(circle at 35% 30%, #f6e2a8, #c9a25e 48%, #7d5f2c); color: #1a1407; border: 0; }
+.rank li:nth-child(3) .pos { background: radial-gradient(circle at 35% 30%, #ffffff, #c7ccd1 46%, #737a81); color: #15181b; border: 0; }
+.rank li:nth-child(4) .pos { background: radial-gradient(circle at 35% 30%, #f0b48c, #b8734a 48%, #6e3d22); color: #1a0e07; border: 0; }
+.rank .quem { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.rank .nome { font-weight: 600; }
+.rank .nac { color: var(--muted); font-size: 13px; }
+.rank .num { font-variant-numeric: tabular-nums; text-align: right; min-width: 64px; }
+.rank-extra, .rank-vazio { color: var(--muted); padding: 14px 0; margin: 0; }
+.rank-nota { color: var(--muted); font-size: 13px; margin: 12px 0 0; }
+.acervo { list-style: none; margin: 0; padding: 0; max-width: 720px; }
+.acervo li { display: grid; grid-template-columns: 1fr 1.2fr 56px 1.4fr; gap: 12px; align-items: center; padding: 9px 0; border-bottom: 1px solid var(--line); font-size: 15px; }
+.acervo li.head { color: var(--muted); font-size: 12px; text-transform: uppercase; letter-spacing: .06em; padding: 8px 0; }
+.acervo .n { font-variant-numeric: tabular-nums; color: var(--muted); }
+.acervo .anon { color: var(--muted); font-style: italic; }
+@media (max-width: 480px) { .acervo li { grid-template-columns: 1fr 1fr 44px 1fr; font-size: 13px; gap: 8px; } }
+.acervo .val { font-weight: 600; }
+
+footer { color: var(--muted); font-size: 13px; border-top: 1px solid var(--line); padding: 20px 0 40px; margin-top: 40px; }
+
+@media (max-width: 760px) {
+  .hero { grid-template-columns: 1fr; gap: 24px; padding-top: 32px; }
+  .send { grid-template-columns: 1fr; }
+  .want { grid-template-columns: 1fr; }
+  .panel { padding: 20px 16px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .slot { transition: none; }
+  .slot:hover { transform: none; }
+}
+</style>
+</head>
+<body>
+
+<header class="top" id="topo">
+  <div class="wrap">
+    <a class="logo" href="#" aria-label="Pilas de Fora">
+      <span class="pilas">pilas</span><span class="defora">def<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9.2" fill="none" stroke="currentColor" stroke-width="3.4"/><ellipse cx="12" cy="12" rx="4" ry="9.2" fill="none" stroke="currentColor" stroke-width="1.8"/><line x1="3" y1="12" x2="21" y2="12" stroke="currentColor" stroke-width="1.8"/></svg>ra</span>
+    </a>
+    <div class="langs" role="group" id="langs"></div>
+    <nav class="top" id="nav">
+      <a href="#paises" data-scroll="paises" data-t="nav_paises"></a>
+      <a href="#envie" data-scroll="envie" data-t="nav_envie"></a>
+      <a href="#ranking" data-scroll="ranking" data-t="nav_ranking"></a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+  <section class="social" id="redes">
+    <h2 data-th="social_h2"></h2>
+    <div class="nets" id="nets"></div>
+  </section>
+
+  <section class="hero">
+    <div>
+    <h1 data-th="h1"></h1>
+    <p data-t="hero_p"></p>
+    </div>
+    <div class="tally" aria-live="polite">
+      <div class="num" id="t-num">0<span> / 195</span></div>
+      <div class="lbl" data-t="tally_lbl"></div>
+      <div class="bar" id="t-bar"><i class="b-temos"></i></div>
+      <div class="legend">
+        <span><i class="dot" style="background:var(--brass)"></i><span data-t="leg_moedas"></span> <b id="t-moedas">0</b></span>
+        <span><span data-t="leg_compradas"></span> <b id="t-compradas">0</b></span>
+        <span><span data-t="leg_presentes"></span> <b id="t-presentes">0</b></span>
+      </div>
+    </div>
+  </section>
+
+  <!-- a barra de busca fica fixa só enquanto a lista de países está na tela -->
+  <section class="area-paises">
+  <div class="tools" id="paises">
+    <label class="search" for="q"><input id="q" type="search" autocomplete="off"></label>
+    <div class="chips" role="group" id="st-chips">
+      <button class="chip" data-st="todos" aria-pressed="true" data-t="chip_todos"></button>
+      <button class="chip" data-st="tem" aria-pressed="false" data-t="chip_tem"></button>
+      <button class="chip" data-st="falta" aria-pressed="false" data-t="chip_falta"></button>
+    </div>
+    <div class="chips" role="group" id="cont-chips"></div>
+  </div>
+
+  <div id="lista"></div>
+  </section>
+
+  <section class="send" id="envie">
+    <div>
+      <div class="sec-head"><h2 data-th="envie_h2"></h2><button type="button" class="topo" data-scroll="topo" data-ta="voltar_menu"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M6 12l6-6 6 6M6 19l6-6 6 6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button></div>
+      <ol>
+        <li data-th="passo1"></li>
+        <li data-th="passo2"></li>
+        <li data-th="passo3"></li>
+        <li data-th="passo4"></li>
+      </ol>
+    </div>
+    <div class="address">
+      <div class="tag" data-t="end_tag"></div>
+      <address id="endereco"></address>
+      <button class="btn ghost" id="copy-addr" type="button" data-t="copiar"></button><span class="copied" id="copied" role="status"></span>
+      <p class="note" data-t="nota"></p>
+    </div>
+  </section>
+
+  <section class="ranking" id="ranking">
+    <div class="sec-head"><h2 data-th="rank_h2"></h2><button type="button" class="topo" data-scroll="topo" data-ta="voltar_menu"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M6 12l6-6 6 6M6 19l6-6 6 6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button></div>
+    <div class="tabs" role="tablist" id="rank-tabs">
+      <button role="tab" id="tab-dinheiro" data-tab="dinheiro" aria-selected="true" aria-controls="rank-painel" data-t="tab_dinheiro"></button>
+      <button role="tab" id="tab-moedas" data-tab="moedas" aria-selected="false" aria-controls="rank-painel" data-t="tab_moedas"></button>
+      <button role="tab" id="tab-acervo" data-tab="acervo" aria-selected="false" aria-controls="rank-painel" data-t="tab_acervo"></button>
+    </div>
+    <div id="rank-painel" role="tabpanel"></div>
+    <p class="rank-nota" data-t="rank_nota"></p>
+  </section>
+</main>
+
+
+<div class="overlay" id="overlay" aria-hidden="true">
+  <div class="panel" role="dialog" aria-modal="true" aria-labelledby="p-title" id="panel"></div>
+</div>
+
+<script>
+/* ============================================================
+   DADOS QUE VOCÊS EDITAM
+   Textos com tradução usam { pt, en, es, zh, hi }.
+   Se faltar um idioma, o site mostra o português.
+   ============================================================ */
+
+/* Os dados vêm do arquivo dados.json, editado pelo app de administração (app.py). */
+const DADOS = {"endereco": ["pilasdefora", "Rua Nunes, 340, apto. 407", "Medianeira", "Porto Alegre – RS", "CEP 90870-390", "Brasil"], "redes": [{"rede": "Instagram", "usuario": "@pilasdefora", "url": "https://www.instagram.com/pilasdefora/"}, {"rede": "Facebook", "usuario": "pilasdefora", "url": "https://www.facebook.com/profile.php?id=61596717114828"}, {"rede": "TikTok", "usuario": "@pilasdefora", "url": ""}, {"rede": "YouTube", "usuario": "@pilasdefora", "url": "https://www.youtube.com/@pilasdefora"}], "doacoes": [], "colecao": {}};
+const ENDERECO = DADOS.endereco || [];
+const REDES = DADOS.redes || [];
+const DOACOES = DADOS.doacoes || [];
+const COLECAO = DADOS.colecao || {};
+const ICONES = {"facebook": "<svg fill=\"currentColor\" aria-hidden=\"true\" focusable=\"false\" viewBox=\"0 0 24 24\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M9.101 23.691v-7.98H6.627v-3.667h2.474v-1.58c0-4.085 1.848-5.978 5.858-5.978.401 0 .955.042 1.468.103a8.68 8.68 0 0 1 1.141.195v3.325a8.623 8.623 0 0 0-.653-.036 26.805 26.805 0 0 0-.733-.009c-.707 0-1.259.096-1.675.309a1.686 1.686 0 0 0-.679.622c-.258.42-.374.995-.374 1.752v1.297h3.919l-.386 2.103-.287 1.564h-3.246v8.245C19.396 23.238 24 18.179 24 12.044c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.628 3.874 10.35 9.101 11.647Z\"/><\/svg>", "instagram": "<svg fill=\"currentColor\" aria-hidden=\"true\" focusable=\"false\" viewBox=\"0 0 24 24\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M7.0301.084c-1.2768.0602-2.1487.264-2.911.5634-.7888.3075-1.4575.72-2.1228 1.3877-.6652.6677-1.075 1.3368-1.3802 2.127-.2954.7638-.4956 1.6365-.552 2.914-.0564 1.2775-.0689 1.6882-.0626 4.947.0062 3.2586.0206 3.6671.0825 4.9473.061 1.2765.264 2.1482.5635 2.9107.308.7889.72 1.4573 1.388 2.1228.6679.6655 1.3365 1.0743 2.1285 1.38.7632.295 1.6361.4961 2.9134.552 1.2773.056 1.6884.069 4.9462.0627 3.2578-.0062 3.668-.0207 4.9478-.0814 1.28-.0607 2.147-.2652 2.9098-.5633.7889-.3086 1.4578-.72 2.1228-1.3881.665-.6682 1.0745-1.3378 1.3795-2.1284.2957-.7632.4966-1.636.552-2.9124.056-1.2809.0692-1.6898.063-4.948-.0063-3.2583-.021-3.6668-.0817-4.9465-.0607-1.2797-.264-2.1487-.5633-2.9117-.3084-.7889-.72-1.4568-1.3876-2.1228C21.2982 1.33 20.628.9208 19.8378.6165 19.074.321 18.2017.1197 16.9244.0645 15.6471.0093 15.236-.005 11.977.0014 8.718.0076 8.31.0215 7.0301.0839m.1402 21.6932c-1.17-.0509-1.8053-.2453-2.2287-.408-.5606-.216-.96-.4771-1.3819-.895-.422-.4178-.6811-.8186-.9-1.378-.1644-.4234-.3624-1.058-.4171-2.228-.0595-1.2645-.072-1.6442-.079-4.848-.007-3.2037.0053-3.583.0607-4.848.05-1.169.2456-1.805.408-2.2282.216-.5613.4762-.96.895-1.3816.4188-.4217.8184-.6814 1.3783-.9003.423-.1651 1.0575-.3614 2.227-.4171 1.2655-.06 1.6447-.072 4.848-.079 3.2033-.007 3.5835.005 4.8495.0608 1.169.0508 1.8053.2445 2.228.408.5608.216.96.4754 1.3816.895.4217.4194.6816.8176.9005 1.3787.1653.4217.3617 1.056.4169 2.2263.0602 1.2655.0739 1.645.0796 4.848.0058 3.203-.0055 3.5834-.061 4.848-.051 1.17-.245 1.8055-.408 2.2294-.216.5604-.4763.96-.8954 1.3814-.419.4215-.8181.6811-1.3783.9-.4224.1649-1.0577.3617-2.2262.4174-1.2656.0595-1.6448.072-4.8493.079-3.2045.007-3.5825-.006-4.848-.0608M16.953 5.5864A1.44 1.44 0 1 0 18.39 4.144a1.44 1.44 0 0 0-1.437 1.4424M5.8385 12.012c.0067 3.4032 2.7706 6.1557 6.173 6.1493 3.4026-.0065 6.157-2.7701 6.1506-6.1733-.0065-3.4032-2.771-6.1565-6.174-6.1498-3.403.0067-6.156 2.771-6.1496 6.1738M8 12.0077a4 4 0 1 1 4.008 3.9921A3.9996 3.9996 0 0 1 8 12.0077\"/><\/svg>", "tiktok": "<svg fill=\"currentColor\" aria-hidden=\"true\" focusable=\"false\" viewBox=\"0 0 24 24\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z\"/><\/svg>", "youtube": "<svg fill=\"currentColor\" aria-hidden=\"true\" focusable=\"false\" viewBox=\"0 0 24 24\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z\"/><\/svg>"};
+
+/* ============================================================
+   TEXTOS DO SITE NOS 5 IDIOMAS
+   ============================================================ */
+const IDIOMAS = [
+  { id: "pt", rotulo: "PT", nome: "Português", locale: "pt-BR" },
+  { id: "en", rotulo: "EN", nome: "English", locale: "en" },
+  { id: "es", rotulo: "ES", nome: "Español", locale: "es" },
+  { id: "zh", rotulo: "中文", nome: "中文", locale: "zh-Hans" },
+  { id: "hi", rotulo: "हिन्दी", nome: "हिन्दी", locale: "hi" }
+];
+
+const T = {
+  pt: {
+    nav_redes: "Redes", nav_paises: "Países", nav_envie: "Mande uma moeda", nav_ranking: "Ranking", voltar_menu: "Voltar ao menu",
+    h1: "As moedas do mundo, <strong>país por país</strong>.",
+    hero_p: "O álbum do canal: cada país tem um encaixe. Os cheios já estão na coleção, com as moedas em tamanho real. Os vazios ainda esperam uns pilas de fora.",
+    tally_lbl: "países na coleção", leg_temos: "Compramos", leg_ganhamos: "Ganhamos", leg_faltam: "Faltam",
+    social_h2: "Um vídeo para cada moeda. <strong>Siga o canal.</strong>",
+    abrir_perfil: "Abrir perfil →", link_definir: "Link a definir",
+    busca: "Buscar país ou moeda (ex.: Japão, EUR)",
+    chip_todos: "Todos", chip_tem: "Na coleção", chip_falta: "Faltando",
+    g_situacao: "Situação", g_continente: "Continente", g_idioma: "Idioma",
+    cont: { "África": "África", "Américas": "Américas", "Ásia": "Ásia", "Europa": "Europa", "Oceania": "Oceania" },
+    conta: "{a} de {b}", vazio: "Nenhum país encontrado com esses filtros.",
+    aria_tem: "na coleção", aria_falta: "faltando",
+    pill_temos: "Compramos", pill_ganhamos: "Ganhamos", pill_falta: "Faltando", pill_exemplo: "Exemplo",
+    tamanho_real: "Moedas em tamanho real.", ajustar: "Ajustar à sua tela",
+    calib_p: "Encoste um cartão de banco na tela e mova o controle até o retângulo ficar do mesmo tamanho do cartão. O ajuste fica salvo neste navegador.",
+    cartao: "cartão ({mm} mm)", padrao: "Voltar ao padrão", mm: "mm",
+    credito_nome: "Presente de <b>{nome}</b>. Obrigado!", credito_anon: "Presente de um seguidor. Obrigado!",
+    comprar: "Comprar este set", afiliado: "Links de afiliado: se você comprar por eles, o canal recebe uma comissão, sem custo extra para você. Não vendemos nem entregamos esses itens: a compra, a entrega e o atendimento são de responsabilidade da loja.", afiliado_breve: "Link de compra em breve.",
+    falta_p: "Ainda não temos moedas de {pais}. Se você tem alguma sobrando, ela ganha um lugar aqui e aparece no canal.",
+    como_mandar: "Como mandar", fechar: "Fechar",
+    envie_h2: "Tem moeda sobrando? <strong>Manda pra cá.</strong>",
+    passo1: "Vale qualquer moeda: de um país que ainda está vazio no álbum, antiga, comemorativa ou repetida.",
+    leg_moedas: "Moedas", leg_compradas: "Compradas", leg_presentes: "Presentes",
+    moedas_1: "1 moeda", moedas_n: "{n} moedas", periodo: "de {a} a {b}",
+    tag_comprada: "comprada", tag_presente: "presente", tag_presente_de: "presente de {nome}", pill_especial: "Especial",
+    tamanho_real: "Moedas em tamanho real, das mais antigas para as mais novas.", dica_verso: "Passe o mouse ou toque na moeda para ver o verso.",
+    passo2: "Embale as moedas num envelope com proteção (plástico-bolha ou papelão), para não furar o envelope no caminho.",
+    passo3: "Quer que o seu nome, o da sua empresa ou o da sua instituição apareça junto à moeda? Coloque no envelope um bilhete com o nome e a frase <em>“Autorizo publicar este nome”</em>. Sem o bilhete, o crédito aparece como “presente de um seguidor”.",
+    passo4: "As moedas recebidas não são devolvidas. Quando chegarem duas iguais, a de melhor estado fica no álbum. A outra será armazenada e continuará compondo o acervo.",
+    rank_h2: "Ranking de <strong>contribuidores</strong>.", tab_dinheiro: "Dinheiro", tab_moedas: "Moedas", tab_acervo: "Acervo", col_num: "Valor", col_pais_un: "País", col_ano: "Ano", col_contrib: "Contribuidor", anonimo: "Anônimo", vazio_acervo: "Ainda não há moedas recebidas de presente.", col_nome: "Nome", col_moedas: "Moedas", col_paises: "Países", col_total: "Total", vazio_dinheiro: "Ainda não há contribuições em dinheiro.", vazio_moedas: "Ainda não há moedas enviadas com nome autorizado.", anon_moedas: "+ {q} de contribuidores anônimos", anon_dinheiro: "+ {v} de contribuidores anônimos", rank_nota: "Só aparecem nomes com autorização por escrito.",
+    end_tag: "Endereço para envio", copiar: "Copiar endereço", copiado: "Copiado", copiar_falha: "Não deu para copiar; selecione o texto acima.",
+    nota: "Toda moeda que ainda não temos, ou que chegar em estado melhor do que a nossa, entra aqui no site e no canal.",
+    rodape: "Alguns botões de compra são links de afiliado: se você comprar por eles, o canal recebe uma comissão, sem custo extra para você. Tamanhos em milímetros conforme as especificações oficiais de cada moeda."
+  },
+  en: {
+    nav_redes: "Follow", nav_paises: "Countries", nav_envie: "Send a coin", nav_ranking: "Ranking", voltar_menu: "Back to menu",
+    h1: "The world's coins, <strong>country by country</strong>.",
+    hero_p: "The channel's album: every country has a slot. The full ones are already in the collection, with the coins at real size. The empty ones are still waiting for coins from abroad.",
+    tally_lbl: "countries in the collection", leg_temos: "Bought", leg_ganhamos: "Gifted", leg_faltam: "Missing",
+    social_h2: "One video for every coin. <strong>Follow the channel.</strong>",
+    abrir_perfil: "Open profile →", link_definir: "Link coming soon",
+    busca: "Search a country or currency (e.g. Japan, EUR)",
+    chip_todos: "All", chip_tem: "In the collection", chip_falta: "Missing",
+    g_situacao: "Status", g_continente: "Continent", g_idioma: "Language",
+    cont: { "África": "Africa", "Américas": "Americas", "Ásia": "Asia", "Europa": "Europe", "Oceania": "Oceania" },
+    conta: "{a} of {b}", vazio: "No country matches these filters.",
+    aria_tem: "in the collection", aria_falta: "missing",
+    pill_temos: "Bought", pill_ganhamos: "Gifted", pill_falta: "Missing", pill_exemplo: "Example",
+    tamanho_real: "Coins at real size.", ajustar: "Fit to your screen",
+    calib_p: "Hold a bank card against the screen and move the slider until the rectangle matches the card. The setting is saved in this browser.",
+    cartao: "card ({mm} mm)", padrao: "Reset to default", mm: "mm",
+    credito_nome: "A gift from <b>{nome}</b>. Thank you!", credito_anon: "A gift from a follower. Thank you!",
+    comprar: "Buy this set", afiliado: "Affiliate links: if you buy through them, the channel earns a commission at no extra cost to you. We don’t sell or ship these items: the purchase, delivery and customer service are the store’s responsibility.", afiliado_breve: "Purchase link coming soon.",
+    falta_p: "We don't have any coins from {pais} yet. If you have one to spare, it gets a place here and shows up on the channel.",
+    como_mandar: "How to send", fechar: "Close",
+    envie_h2: "Got coins lying around? <strong>Send them our way.</strong>",
+    passo1: "Any coin counts: from a country still empty in the album, old, commemorative or a duplicate.",
+    leg_moedas: "Coins", leg_compradas: "Bought", leg_presentes: "Gifts",
+    moedas_1: "1 coin", moedas_n: "{n} coins", periodo: "from {a} to {b}",
+    tag_comprada: "bought", tag_presente: "gift", tag_presente_de: "gift from {nome}", pill_especial: "Special",
+    tamanho_real: "Coins at real size, from oldest to newest.", dica_verso: "Hover over or tap a coin to see the back.",
+    passo2: "Pack the coins in a padded envelope (bubble wrap or cardboard) so they don't tear through on the way.",
+    passo3: "Want your name, or your company’s or institution’s, to appear with the coin? Put a note in the envelope with the name and the sentence <em>“I authorize publishing this name”</em>. Without the note, the credit reads “a gift from a follower”.",
+    passo4: "Coins we receive are not returned. When two identical coins arrive, the one in better condition goes in the album. The other one will be stored and will remain part of the collection.",
+    rank_h2: "Top <strong>contributors</strong>.", tab_dinheiro: "Money", tab_moedas: "Coins", tab_acervo: "Archive", col_num: "Value", col_pais_un: "Country", col_ano: "Year", col_contrib: "Contributor", anonimo: "Anonymous", vazio_acervo: "No coins received as gifts yet.", col_nome: "Name", col_moedas: "Coins", col_paises: "Countries", col_total: "Total", vazio_dinheiro: "No money contributions yet.", vazio_moedas: "No coins sent with a published name yet.", anon_moedas: "+ {q} from anonymous contributors", anon_dinheiro: "+ {v} from anonymous contributors", rank_nota: "Only names with written permission are shown.",
+    end_tag: "Mailing address", copiar: "Copy address", copiado: "Copied", copiar_falha: "Couldn't copy; select the text above.",
+    nota: "Every coin we don’t have yet, or that arrives in better condition than ours, goes on the site and on the channel.",
+    rodape: "Some buy buttons are affiliate links: if you buy through them, the channel earns a commission at no extra cost to you. Sizes in millimetres, from each coin's official specifications."
+  },
+  es: {
+    nav_redes: "Redes", nav_paises: "Países", nav_envie: "Envía una moneda", nav_ranking: "Ranking", voltar_menu: "Volver al menú",
+    h1: "Las monedas del mundo, <strong>país por país</strong>.",
+    hero_p: "El álbum del canal: cada país tiene su hueco. Los llenos ya están en la colección, con las monedas a tamaño real. Los vacíos todavía esperan monedas de fuera.",
+    tally_lbl: "países en la colección", leg_temos: "Compradas", leg_ganhamos: "Regaladas", leg_faltam: "Faltan",
+    social_h2: "Un video para cada moneda. <strong>Sigue el canal.</strong>",
+    abrir_perfil: "Abrir perfil →", link_definir: "Enlace próximamente",
+    busca: "Buscar país o moneda (ej.: Japón, EUR)",
+    chip_todos: "Todos", chip_tem: "En la colección", chip_falta: "Faltan",
+    g_situacao: "Estado", g_continente: "Continente", g_idioma: "Idioma",
+    cont: { "África": "África", "Américas": "Américas", "Ásia": "Asia", "Europa": "Europa", "Oceania": "Oceanía" },
+    conta: "{a} de {b}", vazio: "Ningún país coincide con estos filtros.",
+    aria_tem: "en la colección", aria_falta: "falta",
+    pill_temos: "Comprada", pill_ganhamos: "Regalada", pill_falta: "Falta", pill_exemplo: "Ejemplo",
+    tamanho_real: "Monedas a tamaño real.", ajustar: "Ajustar a tu pantalla",
+    calib_p: "Apoya una tarjeta bancaria en la pantalla y mueve el control hasta que el rectángulo tenga el mismo tamaño que la tarjeta. El ajuste se guarda en este navegador.",
+    cartao: "tarjeta ({mm} mm)", padrao: "Volver al predeterminado", mm: "mm",
+    credito_nome: "Regalo de <b>{nome}</b>. ¡Gracias!", credito_anon: "Regalo de un seguidor. ¡Gracias!",
+    comprar: "Comprar este set", afiliado: "Enlaces de afiliado: si compras con ellos, el canal recibe una comisión sin costo extra para ti. No vendemos ni enviamos estos artículos: la compra, la entrega y la atención son responsabilidad de la tienda.", afiliado_breve: "Enlace de compra próximamente.",
+    falta_p: "Todavía no tenemos monedas de {pais}. Si te sobra alguna, tendrá su lugar aquí y aparecerá en el canal.",
+    como_mandar: "Cómo enviar", fechar: "Cerrar",
+    envie_h2: "¿Te sobran monedas? <strong>Envíanoslas.</strong>",
+    passo1: "Vale cualquier moneda: de un país que todavía está vacío en el álbum, antigua, conmemorativa o repetida.",
+    leg_moedas: "Monedas", leg_compradas: "Compradas", leg_presentes: "Regaladas",
+    moedas_1: "1 moneda", moedas_n: "{n} monedas", periodo: "de {a} a {b}",
+    tag_comprada: "comprada", tag_presente: "regalo", tag_presente_de: "regalo de {nome}", pill_especial: "Especial",
+    tamanho_real: "Monedas a tamaño real, de las más antiguas a las más nuevas.", dica_verso: "Pasa el mouse o toca la moneda para ver el reverso.",
+    passo2: "Envuelve las monedas en un sobre acolchado (plástico de burbujas o cartón) para que no rompan el sobre en el camino.",
+    passo3: "¿Quieres que tu nombre, el de tu empresa o el de tu institución aparezca junto a la moneda? Incluye en el sobre una nota con el nombre y la frase <em>“Autorizo publicar este nombre”</em>. Sin la nota, el crédito aparece como “regalo de un seguidor”.",
+    passo4: "Las monedas recibidas no se devuelven. Cuando lleguen dos iguales, la que esté en mejor estado queda en el álbum. La otra se guardará y seguirá formando parte del acervo.",
+    rank_h2: "Ranking de <strong>colaboradores</strong>.", tab_dinheiro: "Dinero", tab_moedas: "Monedas", tab_acervo: "Acervo", col_num: "Valor", col_pais_un: "País", col_ano: "Año", col_contrib: "Colaborador", anonimo: "Anónimo", vazio_acervo: "Todavía no hay monedas recibidas de regalo.", col_nome: "Nombre", col_moedas: "Monedas", col_paises: "Países", col_total: "Total", vazio_dinheiro: "Todavía no hay contribuciones en dinero.", vazio_moedas: "Todavía no hay monedas enviadas con nombre autorizado.", anon_moedas: "+ {q} de colaboradores anónimos", anon_dinheiro: "+ {v} de colaboradores anónimos", rank_nota: "Solo aparecen nombres con autorización por escrito.",
+    end_tag: "Dirección de envío", copiar: "Copiar dirección", copiado: "Copiada", copiar_falha: "No se pudo copiar; selecciona el texto de arriba.",
+    nota: "Toda moneda que todavía no tengamos, o que llegue en mejor estado que la nuestra, entra aquí en el sitio y en el canal.",
+    rodape: "Algunos botones de compra son enlaces de afiliado: si compras con ellos, el canal recibe una comisión sin costo extra para ti. Tamaños en milímetros, según las especificaciones oficiales de cada moneda."
+  },
+  zh: {
+    nav_redes: "社交媒体", nav_paises: "国家", nav_envie: "寄送硬币", nav_ranking: "排行榜", voltar_menu: "返回菜单",
+    h1: "世界硬币，<strong>一国一国收集</strong>。",
+    hero_p: "这是频道的硬币册：每个国家都有一个位置。填满的已经收入册中，硬币按真实尺寸展示。空着的，还在等待来自远方的硬币。",
+    tally_lbl: "个国家已收藏", leg_temos: "购买", leg_ganhamos: "获赠", leg_faltam: "未收集",
+    social_h2: "每枚硬币一个视频。<strong>关注频道。</strong>",
+    abrir_perfil: "打开主页 →", link_definir: "链接即将上线",
+    busca: "搜索国家或货币（例如：日本、EUR）",
+    chip_todos: "全部", chip_tem: "已收藏", chip_falta: "未收集",
+    g_situacao: "状态", g_continente: "大洲", g_idioma: "语言",
+    cont: { "África": "非洲", "Américas": "美洲", "Ásia": "亚洲", "Europa": "欧洲", "Oceania": "大洋洲" },
+    conta: "{a} / {b}", vazio: "没有符合筛选条件的国家。",
+    aria_tem: "已收藏", aria_falta: "未收集",
+    pill_temos: "购买", pill_ganhamos: "获赠", pill_falta: "未收集", pill_exemplo: "示例",
+    tamanho_real: "硬币按真实尺寸显示。", ajustar: "根据屏幕校准",
+    calib_p: "把一张银行卡贴在屏幕上，拖动滑块，直到矩形与卡片一样大。设置会保存在此浏览器中。",
+    cartao: "银行卡（{mm} 毫米）", padrao: "恢复默认", mm: "毫米",
+    credito_nome: "由 <b>{nome}</b> 赠送。谢谢！", credito_anon: "由一位关注者赠送。谢谢！",
+    comprar: "购买这套硬币", afiliado: "联盟链接：通过这些链接购买，频道会获得佣金，您无需额外付费。我们不销售也不配送这些商品：购买、配送和售后服务均由商店负责。", afiliado_breve: "购买链接即将上线。",
+    falta_p: "我们还没有{pais}的硬币。如果您有多余的，它会在这里占有一席之地，并出现在频道中。",
+    como_mandar: "如何寄送", fechar: "关闭",
+    envie_h2: "有多余的硬币？<strong>寄给我们吧。</strong>",
+    passo1: "任何硬币都欢迎：硬币册中还空着的国家、旧币、纪念币或重复的都可以。",
+    leg_moedas: "硬币", leg_compradas: "购买", leg_presentes: "获赠",
+    moedas_1: "1枚硬币", moedas_n: "{n}枚硬币", periodo: "{a}–{b}年",
+    tag_comprada: "购买", tag_presente: "获赠", tag_presente_de: "{nome} 赠送", pill_especial: "特别版",
+    tamanho_real: "硬币按真实尺寸显示，从最早到最新排列。", dica_verso: "将鼠标悬停在硬币上或轻触硬币即可查看背面。",
+    passo2: "用有保护的信封包装硬币（气泡膜或纸板），以免途中划破信封。",
+    passo3: "希望您的名字、公司或机构名称与硬币一起展示？请在信封里放一张纸条，写上名称和<em>“我同意公开此名称”</em>。没有纸条的话，署名将显示为“由一位关注者赠送”。",
+    passo4: "收到的硬币不予退还。如果收到两枚相同的硬币，品相更好的那枚会放入硬币册。另一枚会被妥善保存，继续作为收藏的一部分。",
+    rank_h2: "<strong>贡献者</strong>排行榜。", tab_dinheiro: "资金", tab_moedas: "硬币", tab_acervo: "藏品清单", col_num: "面值", col_pais_un: "国家", col_ano: "年份", col_contrib: "贡献者", anonimo: "匿名", vazio_acervo: "还没有收到赠送的硬币。", col_nome: "名称", col_moedas: "硬币", col_paises: "国家", col_total: "总额", vazio_dinheiro: "还没有资金捐助。", vazio_moedas: "还没有获准署名的寄送硬币。", anon_moedas: "另有{q}来自匿名贡献者", anon_dinheiro: "另有{v}来自匿名贡献者", rank_nota: "仅显示获得书面授权的名称。",
+    end_tag: "寄送地址", copiar: "复制地址", copiado: "已复制", copiar_falha: "无法复制，请手动选择上面的文字。",
+    nota: "凡是我们还没有的硬币，或品相比我们现有的更好的硬币，都会出现在网站和频道中。",
+    rodape: "部分购买按钮为联盟链接：通过它们购买，频道会获得佣金，您无需额外付费。尺寸以毫米为单位，依据各硬币的官方规格。"
+  },
+  hi: {
+    nav_redes: "सोशल मीडिया", nav_paises: "देश", nav_envie: "सिक्का भेजें", nav_ranking: "रैंकिंग", voltar_menu: "मेनू पर वापस जाएँ",
+    h1: "दुनिया के सिक्के, <strong>देश दर देश</strong>।",
+    hero_p: "यह चैनल का एल्बम है: हर देश की अपनी जगह है। भरी हुई जगहें संग्रह में हैं, सिक्के असली आकार में। खाली जगहें अब भी विदेशी सिक्कों का इंतज़ार कर रही हैं।",
+    tally_lbl: "देश संग्रह में", leg_temos: "खरीदे", leg_ganhamos: "तोहफ़े में मिले", leg_faltam: "बाकी",
+    social_h2: "हर सिक्के पर एक वीडियो। <strong>चैनल फ़ॉलो करें।</strong>",
+    abrir_perfil: "प्रोफ़ाइल खोलें →", link_definir: "लिंक जल्द ही",
+    busca: "देश या मुद्रा खोजें (जैसे: जापान, EUR)",
+    chip_todos: "सभी", chip_tem: "संग्रह में", chip_falta: "बाकी",
+    g_situacao: "स्थिति", g_continente: "महाद्वीप", g_idioma: "भाषा",
+    cont: { "África": "अफ़्रीका", "Américas": "अमेरिका", "Ásia": "एशिया", "Europa": "यूरोप", "Oceania": "ओशिनिया" },
+    conta: "{b} में से {a}", vazio: "इन फ़िल्टरों से कोई देश नहीं मिला।",
+    aria_tem: "संग्रह में", aria_falta: "बाकी",
+    pill_temos: "खरीदा", pill_ganhamos: "तोहफ़ा", pill_falta: "बाकी", pill_exemplo: "उदाहरण",
+    tamanho_real: "सिक्के असली आकार में।", ajustar: "अपनी स्क्रीन के अनुसार सेट करें",
+    calib_p: "बैंक कार्ड को स्क्रीन से सटाएँ और स्लाइडर तब तक खिसकाएँ जब तक आयत कार्ड के बराबर न हो जाए। यह सेटिंग इसी ब्राउज़र में सेव रहती है।",
+    cartao: "कार्ड ({mm} मिमी)", padrao: "डिफ़ॉल्ट पर लौटें", mm: "मिमी",
+    credito_nome: "<b>{nome}</b> की ओर से तोहफ़ा। धन्यवाद!", credito_anon: "एक फ़ॉलोअर की ओर से तोहफ़ा। धन्यवाद!",
+    comprar: "यह सेट खरीदें", afiliado: "एफ़िलिएट लिंक: इनसे खरीदने पर चैनल को कमीशन मिलता है, आपको कोई अतिरिक्त खर्च नहीं। हम ये सामान न बेचते हैं, न भेजते हैं: खरीद, डिलीवरी और ग्राहक सेवा की ज़िम्मेदारी स्टोर की है।", afiliado_breve: "खरीदने का लिंक जल्द ही।",
+    falta_p: "हमारे पास अभी {pais} के सिक्के नहीं हैं। अगर आपके पास कोई बचा हुआ है, तो उसे यहाँ जगह मिलेगी और वह चैनल पर दिखेगा।",
+    como_mandar: "कैसे भेजें", fechar: "बंद करें",
+    envie_h2: "सिक्के बचे हैं? <strong>हमें भेजें।</strong>",
+    passo1: "कोई भी सिक्का चलेगा: एल्बम में खाली किसी देश का, पुराना, स्मारक या दोहराया हुआ।",
+    leg_moedas: "सिक्के", leg_compradas: "खरीदे", leg_presentes: "तोहफ़े",
+    moedas_1: "1 सिक्का", moedas_n: "{n} सिक्के", periodo: "{a} से {b} तक",
+    tag_comprada: "खरीदा", tag_presente: "तोहफ़ा", tag_presente_de: "{nome} का तोहफ़ा", pill_especial: "विशेष",
+    tamanho_real: "सिक्के असली आकार में, सबसे पुराने से सबसे नए तक।", dica_verso: "पीछे का हिस्सा देखने के लिए सिक्के पर माउस ले जाएँ या टैप करें।",
+    passo2: "सिक्कों को सुरक्षित लिफ़ाफ़े में पैक करें (बबल रैप या गत्ता), ताकि रास्ते में लिफ़ाफ़ा न फटे।",
+    passo3: "क्या आप चाहते हैं कि आपका, आपकी कंपनी का या आपकी संस्था का नाम सिक्के के साथ दिखे? लिफ़ाफ़े में नाम के साथ एक पर्ची रखें और लिखें <em>“इस नाम को प्रकाशित करने की अनुमति है”</em>। पर्ची के बिना, श्रेय “एक फ़ॉलोअर की ओर से तोहफ़ा” के रूप में दिखेगा।",
+    passo4: "मिले हुए सिक्के लौटाए नहीं जाते। अगर दो एक जैसे सिक्के आएँ, तो बेहतर हालत वाला एल्बम में रखा जाएगा। दूसरा सिक्का सुरक्षित रखा जाएगा और संग्रह का हिस्सा बना रहेगा।",
+    rank_h2: "<strong>योगदानकर्ताओं</strong> की रैंकिंग।", tab_dinheiro: "पैसे", tab_moedas: "सिक्के", tab_acervo: "संग्रह सूची", col_num: "मूल्य", col_pais_un: "देश", col_ano: "वर्ष", col_contrib: "योगदानकर्ता", anonimo: "गुमनाम", vazio_acervo: "अभी तक तोहफ़े में कोई सिक्का नहीं आया।", col_nome: "नाम", col_moedas: "सिक्के", col_paises: "देश", col_total: "कुल", vazio_dinheiro: "अभी तक पैसों का कोई योगदान नहीं है।", vazio_moedas: "अभी तक नाम प्रकाशित करने की अनुमति के साथ कोई सिक्का नहीं आया।", anon_moedas: "+ गुमनाम योगदानकर्ताओं से {q}", anon_dinheiro: "+ गुमनाम योगदानकर्ताओं से {v}", rank_nota: "केवल लिखित अनुमति वाले नाम ही दिखाए जाते हैं।",
+    end_tag: "भेजने का पता", copiar: "पता कॉपी करें", copiado: "कॉपी हो गया", copiar_falha: "कॉपी नहीं हो सका; ऊपर का टेक्स्ट चुनें।",
+    nota: "हर वह सिक्का जो हमारे पास अभी नहीं है, या जो हमारे वाले से बेहतर हालत में आए, यहाँ साइट पर और चैनल पर आएगा।",
+    rodape: "कुछ खरीदें बटन एफ़िलिएट लिंक हैं: इनसे खरीदने पर चैनल को कमीशन मिलता है, आपको कोई अतिरिक्त खर्च नहीं। आकार मिलीमीटर में, हर सिक्के के आधिकारिक विनिर्देशों के अनुसार।"
+  }
+};
+
+/* ============================================================
+   DAQUI PARA BAIXO, O SITE
+   ============================================================ */
+const PAISES = [{"id": "AFG", "nome": "Afeganistão", "flag": "🇦🇫", "cont": "Ásia", "moeda": "AFN · ؋", "cc": "AF"}, {"id": "ZAF", "nome": "África do Sul", "flag": "🇿🇦", "cont": "África", "moeda": "ZAR · R", "cc": "ZA"}, {"id": "ALB", "nome": "Albânia", "flag": "🇦🇱", "cont": "Europa", "moeda": "ALL · L", "cc": "AL"}, {"id": "DEU", "nome": "Alemanha", "flag": "🇩🇪", "cont": "Europa", "moeda": "EUR · €", "cc": "DE"}, {"id": "AND", "nome": "Andorra", "flag": "🇦🇩", "cont": "Europa", "moeda": "EUR · €", "cc": "AD"}, {"id": "AGO", "nome": "Angola", "flag": "🇦🇴", "cont": "África", "moeda": "AOA · Kz", "cc": "AO"}, {"id": "ATG", "nome": "Antígua e Barbuda", "flag": "🇦🇬", "cont": "Américas", "moeda": "XCD · $", "cc": "AG"}, {"id": "SAU", "nome": "Arábia Saudita", "flag": "🇸🇦", "cont": "Ásia", "moeda": "SAR · ر.س", "cc": "SA"}, {"id": "DZA", "nome": "Argélia", "flag": "🇩🇿", "cont": "África", "moeda": "DZD · د.ج", "cc": "DZ"}, {"id": "ARG", "nome": "Argentina", "flag": "🇦🇷", "cont": "Américas", "moeda": "ARS · $", "cc": "AR"}, {"id": "ARM", "nome": "Arménia", "flag": "🇦🇲", "cont": "Ásia", "moeda": "AMD · ֏", "cc": "AM"}, {"id": "AUS", "nome": "Austrália", "flag": "🇦🇺", "cont": "Oceania", "moeda": "AUD · $", "cc": "AU"}, {"id": "AUT", "nome": "Áustria", "flag": "🇦🇹", "cont": "Europa", "moeda": "EUR · €", "cc": "AT"}, {"id": "AZE", "nome": "Azerbeijão", "flag": "🇦🇿", "cont": "Ásia", "moeda": "AZN · ₼", "cc": "AZ"}, {"id": "BHS", "nome": "Bahamas", "flag": "🇧🇸", "cont": "Américas", "moeda": "BSD · $ / USD · $", "cc": "BS"}, {"id": "BHR", "nome": "Bahrein", "flag": "🇧🇭", "cont": "Ásia", "moeda": "BHD · .د.ب", "cc": "BH"}, {"id": "BGD", "nome": "Bangladesh", "flag": "🇧🇩", "cont": "Ásia", "moeda": "BDT · ৳", "cc": "BD"}, {"id": "BRB", "nome": "Barbados", "flag": "🇧🇧", "cont": "Américas", "moeda": "BBD · $", "cc": "BB"}, {"id": "BEL", "nome": "Bélgica", "flag": "🇧🇪", "cont": "Europa", "moeda": "EUR · €", "cc": "BE"}, {"id": "BLZ", "nome": "Belize", "flag": "🇧🇿", "cont": "Américas", "moeda": "BZD · $", "cc": "BZ"}, {"id": "BEN", "nome": "Benin", "flag": "🇧🇯", "cont": "África", "moeda": "XOF · Fr", "cc": "BJ"}, {"id": "BLR", "nome": "Bielorússia", "flag": "🇧🇾", "cont": "Europa", "moeda": "BYN · Br", "cc": "BY"}, {"id": "BOL", "nome": "Bolívia", "flag": "🇧🇴", "cont": "Américas", "moeda": "BOB · Bs.", "cc": "BO"}, {"id": "BIH", "nome": "Bósnia e Herzegovina", "flag": "🇧🇦", "cont": "Europa", "moeda": "BAM · KM", "cc": "BA"}, {"id": "BWA", "nome": "Botswana", "flag": "🇧🇼", "cont": "África", "moeda": "BWP · P", "cc": "BW"}, {"id": "BRA", "nome": "Brasil", "flag": "🇧🇷", "cont": "Américas", "moeda": "BRL · R$", "cc": "BR"}, {"id": "BRN", "nome": "Brunei", "flag": "🇧🇳", "cont": "Ásia", "moeda": "BND · $ / SGD · $", "cc": "BN"}, {"id": "BGR", "nome": "Bulgária", "flag": "🇧🇬", "cont": "Europa", "moeda": "BGN · лв", "cc": "BG"}, {"id": "BFA", "nome": "Burkina Faso", "flag": "🇧🇫", "cont": "África", "moeda": "XOF · Fr", "cc": "BF"}, {"id": "BDI", "nome": "Burundi", "flag": "🇧🇮", "cont": "África", "moeda": "BIF · Fr", "cc": "BI"}, {"id": "BTN", "nome": "Butão", "flag": "🇧🇹", "cont": "Ásia", "moeda": "BTN · Nu. / INR · ₹", "cc": "BT"}, {"id": "CPV", "nome": "Cabo Verde", "flag": "🇨🇻", "cont": "África", "moeda": "CVE · Esc", "cc": "CV"}, {"id": "CMR", "nome": "Camarões", "flag": "🇨🇲", "cont": "África", "moeda": "XAF · Fr", "cc": "CM"}, {"id": "KHM", "nome": "Camboja", "flag": "🇰🇭", "cont": "Ásia", "moeda": "KHR · ៛ / USD · $", "cc": "KH"}, {"id": "CAN", "nome": "Canadá", "flag": "🇨🇦", "cont": "Américas", "moeda": "CAD · $", "cc": "CA"}, {"id": "QAT", "nome": "Catar", "flag": "🇶🇦", "cont": "Ásia", "moeda": "QAR · ر.ق", "cc": "QA"}, {"id": "KAZ", "nome": "Cazaquistão", "flag": "🇰🇿", "cont": "Ásia", "moeda": "KZT · ₸", "cc": "KZ"}, {"id": "TCD", "nome": "Chade", "flag": "🇹🇩", "cont": "África", "moeda": "XAF · Fr", "cc": "TD"}, {"id": "CZE", "nome": "Chéquia", "flag": "🇨🇿", "cont": "Europa", "moeda": "CZK · Kč", "cc": "CZ"}, {"id": "CHL", "nome": "Chile", "flag": "🇨🇱", "cont": "Américas", "moeda": "CLP · $", "cc": "CL"}, {"id": "CHN", "nome": "China", "flag": "🇨🇳", "cont": "Ásia", "moeda": "CNY · ¥", "cc": "CN"}, {"id": "CYP", "nome": "Chipre", "flag": "🇨🇾", "cont": "Europa", "moeda": "EUR · €", "cc": "CY"}, {"id": "VAT", "nome": "Cidade do Vaticano", "flag": "🇻🇦", "cont": "Europa", "moeda": "EUR · €", "cc": "VA"}, {"id": "COL", "nome": "Colômbia", "flag": "🇨🇴", "cont": "Américas", "moeda": "COP · $", "cc": "CO"}, {"id": "COM", "nome": "Comores", "flag": "🇰🇲", "cont": "África", "moeda": "KMF · Fr", "cc": "KM"}, {"id": "COG", "nome": "Congo", "flag": "🇨🇬", "cont": "África", "moeda": "XAF · Fr", "cc": "CG"}, {"id": "PRK", "nome": "Coreia do Norte", "flag": "🇰🇵", "cont": "Ásia", "moeda": "KPW · ₩", "cc": "KP"}, {"id": "KOR", "nome": "Coreia do Sul", "flag": "🇰🇷", "cont": "Ásia", "moeda": "KRW · ₩", "cc": "KR"}, {"id": "CIV", "nome": "Costa do Marfim", "flag": "🇨🇮", "cont": "África", "moeda": "XOF · Fr", "cc": "CI"}, {"id": "CRI", "nome": "Costa Rica", "flag": "🇨🇷", "cont": "Américas", "moeda": "CRC · ₡", "cc": "CR"}, {"id": "HRV", "nome": "Croácia", "flag": "🇭🇷", "cont": "Europa", "moeda": "EUR · €", "cc": "HR"}, {"id": "CUB", "nome": "Cuba", "flag": "🇨🇺", "cont": "Américas", "moeda": "CUC · $ / CUP · $", "cc": "CU"}, {"id": "DNK", "nome": "Dinamarca", "flag": "🇩🇰", "cont": "Europa", "moeda": "DKK · kr", "cc": "DK"}, {"id": "DJI", "nome": "Djibouti", "flag": "🇩🇯", "cont": "África", "moeda": "DJF · Fr", "cc": "DJ"}, {"id": "DMA", "nome": "Dominica", "flag": "🇩🇲", "cont": "Américas", "moeda": "XCD · $", "cc": "DM"}, {"id": "EGY", "nome": "Egito", "flag": "🇪🇬", "cont": "África", "moeda": "EGP · £", "cc": "EG"}, {"id": "SLV", "nome": "El Salvador", "flag": "🇸🇻", "cont": "Américas", "moeda": "USD · $", "cc": "SV"}, {"id": "ARE", "nome": "Emirados Árabes Unidos", "flag": "🇦🇪", "cont": "Ásia", "moeda": "AED · د.إ", "cc": "AE"}, {"id": "ECU", "nome": "Equador", "flag": "🇪🇨", "cont": "Américas", "moeda": "USD · $", "cc": "EC"}, {"id": "ERI", "nome": "Eritreia", "flag": "🇪🇷", "cont": "África", "moeda": "ERN · Nfk", "cc": "ER"}, {"id": "SVK", "nome": "Eslováquia", "flag": "🇸🇰", "cont": "Europa", "moeda": "EUR · €", "cc": "SK"}, {"id": "SVN", "nome": "Eslovénia", "flag": "🇸🇮", "cont": "Europa", "moeda": "EUR · €", "cc": "SI"}, {"id": "ESP", "nome": "Espanha", "flag": "🇪🇸", "cont": "Europa", "moeda": "EUR · €", "cc": "ES"}, {"id": "USA", "nome": "Estados Unidos", "flag": "🇺🇸", "cont": "Américas", "moeda": "USD · $", "cc": "US"}, {"id": "EST", "nome": "Estónia", "flag": "🇪🇪", "cont": "Europa", "moeda": "EUR · €", "cc": "EE"}, {"id": "ETH", "nome": "Etiópia", "flag": "🇪🇹", "cont": "África", "moeda": "ETB · Br", "cc": "ET"}, {"id": "FJI", "nome": "Fiji", "flag": "🇫🇯", "cont": "Oceania", "moeda": "FJD · $", "cc": "FJ"}, {"id": "PHL", "nome": "Filipinas", "flag": "🇵🇭", "cont": "Ásia", "moeda": "PHP · ₱", "cc": "PH"}, {"id": "FIN", "nome": "Finlândia", "flag": "🇫🇮", "cont": "Europa", "moeda": "EUR · €", "cc": "FI"}, {"id": "FRA", "nome": "França", "flag": "🇫🇷", "cont": "Europa", "moeda": "EUR · €", "cc": "FR"}, {"id": "GAB", "nome": "Gabão", "flag": "🇬🇦", "cont": "África", "moeda": "XAF · Fr", "cc": "GA"}, {"id": "GMB", "nome": "Gâmbia", "flag": "🇬🇲", "cont": "África", "moeda": "GMD · D", "cc": "GM"}, {"id": "GHA", "nome": "Gana", "flag": "🇬🇭", "cont": "África", "moeda": "GHS · ₵", "cc": "GH"}, {"id": "GEO", "nome": "Geórgia", "flag": "🇬🇪", "cont": "Ásia", "moeda": "GEL · ₾", "cc": "GE"}, {"id": "GRD", "nome": "Granada", "flag": "🇬🇩", "cont": "Américas", "moeda": "XCD · $", "cc": "GD"}, {"id": "GRC", "nome": "Grécia", "flag": "🇬🇷", "cont": "Europa", "moeda": "EUR · €", "cc": "GR"}, {"id": "GTM", "nome": "Guatemala", "flag": "🇬🇹", "cont": "Américas", "moeda": "GTQ · Q", "cc": "GT"}, {"id": "GUY", "nome": "Guiana", "flag": "🇬🇾", "cont": "Américas", "moeda": "GYD · $", "cc": "GY"}, {"id": "GIN", "nome": "Guiné", "flag": "🇬🇳", "cont": "África", "moeda": "GNF · Fr", "cc": "GN"}, {"id": "GNQ", "nome": "Guiné Equatorial", "flag": "🇬🇶", "cont": "África", "moeda": "XAF · Fr", "cc": "GQ"}, {"id": "GNB", "nome": "Guiné-Bissau", "flag": "🇬🇼", "cont": "África", "moeda": "XOF · Fr", "cc": "GW"}, {"id": "HTI", "nome": "Haiti", "flag": "🇭🇹", "cont": "Américas", "moeda": "HTG · G", "cc": "HT"}, {"id": "NLD", "nome": "Holanda", "flag": "🇳🇱", "cont": "Europa", "moeda": "EUR · €", "cc": "NL"}, {"id": "HND", "nome": "Honduras", "flag": "🇭🇳", "cont": "Américas", "moeda": "HNL · L", "cc": "HN"}, {"id": "HUN", "nome": "Hungria", "flag": "🇭🇺", "cont": "Europa", "moeda": "HUF · Ft", "cc": "HU"}, {"id": "YEM", "nome": "Iémen", "flag": "🇾🇪", "cont": "Ásia", "moeda": "YER · ﷼", "cc": "YE"}, {"id": "MHL", "nome": "Ilhas Marshall", "flag": "🇲🇭", "cont": "Oceania", "moeda": "USD · $", "cc": "MH"}, {"id": "SLB", "nome": "Ilhas Salomão", "flag": "🇸🇧", "cont": "Oceania", "moeda": "SBD · $", "cc": "SB"}, {"id": "IND", "nome": "Índia", "flag": "🇮🇳", "cont": "Ásia", "moeda": "INR · ₹", "cc": "IN"}, {"id": "IDN", "nome": "Indonésia", "flag": "🇮🇩", "cont": "Ásia", "moeda": "IDR · Rp", "cc": "ID"}, {"id": "IRN", "nome": "Irão", "flag": "🇮🇷", "cont": "Ásia", "moeda": "IRR · ﷼", "cc": "IR"}, {"id": "IRQ", "nome": "Iraque", "flag": "🇮🇶", "cont": "Ásia", "moeda": "IQD · ع.د", "cc": "IQ"}, {"id": "IRL", "nome": "Irlanda", "flag": "🇮🇪", "cont": "Europa", "moeda": "EUR · €", "cc": "IE"}, {"id": "ISL", "nome": "Islândia", "flag": "🇮🇸", "cont": "Europa", "moeda": "ISK · kr", "cc": "IS"}, {"id": "ISR", "nome": "Israel", "flag": "🇮🇱", "cont": "Ásia", "moeda": "ILS · ₪", "cc": "IL"}, {"id": "ITA", "nome": "Itália", "flag": "🇮🇹", "cont": "Europa", "moeda": "EUR · €", "cc": "IT"}, {"id": "JAM", "nome": "Jamaica", "flag": "🇯🇲", "cont": "Américas", "moeda": "JMD · $", "cc": "JM"}, {"id": "JPN", "nome": "Japão", "flag": "🇯🇵", "cont": "Ásia", "moeda": "JPY · ¥", "cc": "JP"}, {"id": "JOR", "nome": "Jordânia", "flag": "🇯🇴", "cont": "Ásia", "moeda": "JOD · د.ا", "cc": "JO"}, {"id": "KIR", "nome": "Kiribati", "flag": "🇰🇮", "cont": "Oceania", "moeda": "AUD · $ / KID · $", "cc": "KI"}, {"id": "KWT", "nome": "Kuwait", "flag": "🇰🇼", "cont": "Ásia", "moeda": "KWD · د.ك", "cc": "KW"}, {"id": "LAO", "nome": "Laos", "flag": "🇱🇦", "cont": "Ásia", "moeda": "LAK · ₭", "cc": "LA"}, {"id": "LSO", "nome": "Lesoto", "flag": "🇱🇸", "cont": "África", "moeda": "LSL · L / ZAR · R", "cc": "LS"}, {"id": "LVA", "nome": "Letónia", "flag": "🇱🇻", "cont": "Europa", "moeda": "EUR · €", "cc": "LV"}, {"id": "LBN", "nome": "Líbano", "flag": "🇱🇧", "cont": "Ásia", "moeda": "LBP · ل.ل", "cc": "LB"}, {"id": "LBR", "nome": "Libéria", "flag": "🇱🇷", "cont": "África", "moeda": "LRD · $", "cc": "LR"}, {"id": "LBY", "nome": "Líbia", "flag": "🇱🇾", "cont": "África", "moeda": "LYD · ل.د", "cc": "LY"}, {"id": "LIE", "nome": "Liechtenstein", "flag": "🇱🇮", "cont": "Europa", "moeda": "CHF · Fr", "cc": "LI"}, {"id": "LTU", "nome": "Lituânia", "flag": "🇱🇹", "cont": "Europa", "moeda": "EUR · €", "cc": "LT"}, {"id": "LUX", "nome": "Luxemburgo", "flag": "🇱🇺", "cont": "Europa", "moeda": "EUR · €", "cc": "LU"}, {"id": "MKD", "nome": "Macedónia do Norte", "flag": "🇲🇰", "cont": "Europa", "moeda": "MKD · den", "cc": "MK"}, {"id": "MDG", "nome": "Madagáscar", "flag": "🇲🇬", "cont": "África", "moeda": "MGA · Ar", "cc": "MG"}, {"id": "MYS", "nome": "Malásia", "flag": "🇲🇾", "cont": "Ásia", "moeda": "MYR · RM", "cc": "MY"}, {"id": "MWI", "nome": "Malawi", "flag": "🇲🇼", "cont": "África", "moeda": "MWK · MK", "cc": "MW"}, {"id": "MDV", "nome": "Maldivas", "flag": "🇲🇻", "cont": "Ásia", "moeda": "MVR · .ރ", "cc": "MV"}, {"id": "MLI", "nome": "Mali", "flag": "🇲🇱", "cont": "África", "moeda": "XOF · Fr", "cc": "ML"}, {"id": "MLT", "nome": "Malta", "flag": "🇲🇹", "cont": "Europa", "moeda": "EUR · €", "cc": "MT"}, {"id": "MAR", "nome": "Marrocos", "flag": "🇲🇦", "cont": "África", "moeda": "MAD · د.م.", "cc": "MA"}, {"id": "MUS", "nome": "Maurício", "flag": "🇲🇺", "cont": "África", "moeda": "MUR · ₨", "cc": "MU"}, {"id": "MRT", "nome": "Mauritânia", "flag": "🇲🇷", "cont": "África", "moeda": "MRU · UM", "cc": "MR"}, {"id": "MEX", "nome": "México", "flag": "🇲🇽", "cont": "Américas", "moeda": "MXN · $", "cc": "MX"}, {"id": "FSM", "nome": "Micronésia", "flag": "🇫🇲", "cont": "Oceania", "moeda": "USD · $", "cc": "FM"}, {"id": "MOZ", "nome": "Moçambique", "flag": "🇲🇿", "cont": "África", "moeda": "MZN · MT", "cc": "MZ"}, {"id": "MDA", "nome": "Moldávia", "flag": "🇲🇩", "cont": "Europa", "moeda": "MDL · L", "cc": "MD"}, {"id": "MCO", "nome": "Mónaco", "flag": "🇲🇨", "cont": "Europa", "moeda": "EUR · €", "cc": "MC"}, {"id": "MNG", "nome": "Mongólia", "flag": "🇲🇳", "cont": "Ásia", "moeda": "MNT · ₮", "cc": "MN"}, {"id": "MNE", "nome": "Montenegro", "flag": "🇲🇪", "cont": "Europa", "moeda": "EUR · €", "cc": "ME"}, {"id": "MMR", "nome": "Myanmar", "flag": "🇲🇲", "cont": "Ásia", "moeda": "MMK · Ks", "cc": "MM"}, {"id": "NAM", "nome": "Namíbia", "flag": "🇳🇦", "cont": "África", "moeda": "NAD · $ / ZAR · R", "cc": "NA"}, {"id": "NRU", "nome": "Nauru", "flag": "🇳🇷", "cont": "Oceania", "moeda": "AUD · $", "cc": "NR"}, {"id": "NPL", "nome": "Nepal", "flag": "🇳🇵", "cont": "Ásia", "moeda": "NPR · ₨", "cc": "NP"}, {"id": "NIC", "nome": "Nicarágua", "flag": "🇳🇮", "cont": "Américas", "moeda": "NIO · C$", "cc": "NI"}, {"id": "NER", "nome": "Níger", "flag": "🇳🇪", "cont": "África", "moeda": "XOF · Fr", "cc": "NE"}, {"id": "NGA", "nome": "Nigéria", "flag": "🇳🇬", "cont": "África", "moeda": "NGN · ₦", "cc": "NG"}, {"id": "NOR", "nome": "Noruega", "flag": "🇳🇴", "cont": "Europa", "moeda": "NOK · kr", "cc": "NO"}, {"id": "NZL", "nome": "Nova Zelândia", "flag": "🇳🇿", "cont": "Oceania", "moeda": "NZD · $", "cc": "NZ"}, {"id": "OMN", "nome": "Omã", "flag": "🇴🇲", "cont": "Ásia", "moeda": "OMR · ر.ع.", "cc": "OM"}, {"id": "PLW", "nome": "Palau", "flag": "🇵🇼", "cont": "Oceania", "moeda": "USD · $", "cc": "PW"}, {"id": "PSE", "nome": "Palestina", "flag": "🇵🇸", "cont": "Ásia", "moeda": "EGP · E£ / ILS · ₪ / JOD · JD", "cc": "PS"}, {"id": "PAN", "nome": "Panamá", "flag": "🇵🇦", "cont": "Américas", "moeda": "PAB · B/. / USD · $", "cc": "PA"}, {"id": "PNG", "nome": "Papua Nova Guiné", "flag": "🇵🇬", "cont": "Oceania", "moeda": "PGK · K", "cc": "PG"}, {"id": "PAK", "nome": "Paquistão", "flag": "🇵🇰", "cont": "Ásia", "moeda": "PKR · ₨", "cc": "PK"}, {"id": "PRY", "nome": "Paraguai", "flag": "🇵🇾", "cont": "Américas", "moeda": "PYG · ₲", "cc": "PY"}, {"id": "PER", "nome": "Perú", "flag": "🇵🇪", "cont": "Américas", "moeda": "PEN · S/.", "cc": "PE"}, {"id": "POL", "nome": "Polónia", "flag": "🇵🇱", "cont": "Europa", "moeda": "PLN · zł", "cc": "PL"}, {"id": "PRT", "nome": "Portugal", "flag": "🇵🇹", "cont": "Europa", "moeda": "EUR · €", "cc": "PT"}, {"id": "KEN", "nome": "Quénia", "flag": "🇰🇪", "cont": "África", "moeda": "KES · Sh", "cc": "KE"}, {"id": "KGZ", "nome": "Quirguistão", "flag": "🇰🇬", "cont": "Ásia", "moeda": "KGS · с", "cc": "KG"}, {"id": "GBR", "nome": "Reino Unido", "flag": "🇬🇧", "cont": "Europa", "moeda": "GBP · £", "cc": "GB"}, {"id": "CAF", "nome": "República Centro-Africana", "flag": "🇨🇫", "cont": "África", "moeda": "XAF · Fr", "cc": "CF"}, {"id": "COD", "nome": "República Democrática do Congo", "flag": "🇨🇩", "cont": "África", "moeda": "CDF · FC", "cc": "CD"}, {"id": "DOM", "nome": "República Dominicana", "flag": "🇩🇴", "cont": "Américas", "moeda": "DOP · $", "cc": "DO"}, {"id": "ROU", "nome": "Roménia", "flag": "🇷🇴", "cont": "Europa", "moeda": "RON · lei", "cc": "RO"}, {"id": "RWA", "nome": "Ruanda", "flag": "🇷🇼", "cont": "África", "moeda": "RWF · Fr", "cc": "RW"}, {"id": "RUS", "nome": "Rússia", "flag": "🇷🇺", "cont": "Europa", "moeda": "RUB · ₽", "cc": "RU"}, {"id": "WSM", "nome": "Samoa", "flag": "🇼🇸", "cont": "Oceania", "moeda": "WST · T", "cc": "WS"}, {"id": "SMR", "nome": "San Marino", "flag": "🇸🇲", "cont": "Europa", "moeda": "EUR · €", "cc": "SM"}, {"id": "LCA", "nome": "Santa Lúcia", "flag": "🇱🇨", "cont": "Américas", "moeda": "XCD · $", "cc": "LC"}, {"id": "KNA", "nome": "São Cristóvão e Nevis", "flag": "🇰🇳", "cont": "Américas", "moeda": "XCD · $", "cc": "KN"}, {"id": "STP", "nome": "São Tomé e Príncipe", "flag": "🇸🇹", "cont": "África", "moeda": "STN · Db", "cc": "ST"}, {"id": "VCT", "nome": "São Vincente e Granadinas", "flag": "🇻🇨", "cont": "Américas", "moeda": "XCD · $", "cc": "VC"}, {"id": "SYC", "nome": "Seicheles", "flag": "🇸🇨", "cont": "África", "moeda": "SCR · ₨", "cc": "SC"}, {"id": "SEN", "nome": "Senegal", "flag": "🇸🇳", "cont": "África", "moeda": "XOF · Fr", "cc": "SN"}, {"id": "SLE", "nome": "Serra Leoa", "flag": "🇸🇱", "cont": "África", "moeda": "SLL · Le", "cc": "SL"}, {"id": "SRB", "nome": "Sérvia", "flag": "🇷🇸", "cont": "Europa", "moeda": "RSD · дин.", "cc": "RS"}, {"id": "SGP", "nome": "Singapura", "flag": "🇸🇬", "cont": "Ásia", "moeda": "SGD · $", "cc": "SG"}, {"id": "SYR", "nome": "Síria", "flag": "🇸🇾", "cont": "Ásia", "moeda": "SYP · £", "cc": "SY"}, {"id": "SOM", "nome": "Somália", "flag": "🇸🇴", "cont": "África", "moeda": "SOS · Sh", "cc": "SO"}, {"id": "LKA", "nome": "Sri Lanka", "flag": "🇱🇰", "cont": "Ásia", "moeda": "LKR · Rs  රු", "cc": "LK"}, {"id": "SWZ", "nome": "Suazilândia", "flag": "🇸🇿", "cont": "África", "moeda": "SZL · L / ZAR · R", "cc": "SZ"}, {"id": "SDN", "nome": "Sudão", "flag": "🇸🇩", "cont": "África", "moeda": "SDG · PT", "cc": "SD"}, {"id": "SSD", "nome": "Sudão do Sul", "flag": "🇸🇸", "cont": "África", "moeda": "SSP · £", "cc": "SS"}, {"id": "SWE", "nome": "Suécia", "flag": "🇸🇪", "cont": "Europa", "moeda": "SEK · kr", "cc": "SE"}, {"id": "CHE", "nome": "Suíça", "flag": "🇨🇭", "cont": "Europa", "moeda": "CHF · Fr.", "cc": "CH"}, {"id": "SUR", "nome": "Suriname", "flag": "🇸🇷", "cont": "Américas", "moeda": "SRD · $", "cc": "SR"}, {"id": "THA", "nome": "Tailândia", "flag": "🇹🇭", "cont": "Ásia", "moeda": "THB · ฿", "cc": "TH"}, {"id": "TJK", "nome": "Tajiquistão", "flag": "🇹🇯", "cont": "Ásia", "moeda": "TJS · ЅМ", "cc": "TJ"}, {"id": "TZA", "nome": "Tanzânia", "flag": "🇹🇿", "cont": "África", "moeda": "TZS · Sh", "cc": "TZ"}, {"id": "TLS", "nome": "Timor-Leste", "flag": "🇹🇱", "cont": "Ásia", "moeda": "USD · $", "cc": "TL"}, {"id": "TGO", "nome": "Togo", "flag": "🇹🇬", "cont": "África", "moeda": "XOF · Fr", "cc": "TG"}, {"id": "TON", "nome": "Tonga", "flag": "🇹🇴", "cont": "Oceania", "moeda": "TOP · T$", "cc": "TO"}, {"id": "TTO", "nome": "Trinidade e Tobago", "flag": "🇹🇹", "cont": "Américas", "moeda": "TTD · $", "cc": "TT"}, {"id": "TUN", "nome": "Tunísia", "flag": "🇹🇳", "cont": "África", "moeda": "TND · د.ت", "cc": "TN"}, {"id": "TKM", "nome": "Turquemenistão", "flag": "🇹🇲", "cont": "Ásia", "moeda": "TMT · m", "cc": "TM"}, {"id": "TUR", "nome": "Turquia", "flag": "🇹🇷", "cont": "Ásia", "moeda": "TRY · ₺", "cc": "TR"}, {"id": "TUV", "nome": "Tuvalu", "flag": "🇹🇻", "cont": "Oceania", "moeda": "AUD · $ / TVD · $", "cc": "TV"}, {"id": "UKR", "nome": "Ucrânia", "flag": "🇺🇦", "cont": "Europa", "moeda": "UAH · ₴", "cc": "UA"}, {"id": "UGA", "nome": "Uganda", "flag": "🇺🇬", "cont": "África", "moeda": "UGX · Sh", "cc": "UG"}, {"id": "URY", "nome": "Uruguai", "flag": "🇺🇾", "cont": "Américas", "moeda": "UYU · $", "cc": "UY"}, {"id": "UZB", "nome": "Uzbequistão", "flag": "🇺🇿", "cont": "Ásia", "moeda": "UZS · so'm", "cc": "UZ"}, {"id": "VUT", "nome": "Vanuatu", "flag": "🇻🇺", "cont": "Oceania", "moeda": "VUV · Vt", "cc": "VU"}, {"id": "VEN", "nome": "Venezuela", "flag": "🇻🇪", "cont": "Américas", "moeda": "VES · Bs.S.", "cc": "VE"}, {"id": "VNM", "nome": "Vietname", "flag": "🇻🇳", "cont": "Ásia", "moeda": "VND · ₫", "cc": "VN"}, {"id": "ZMB", "nome": "Zâmbia", "flag": "🇿🇲", "cont": "África", "moeda": "ZMW · ZK", "cc": "ZM"}, {"id": "ZWE", "nome": "Zimbabwe", "flag": "🇿🇼", "cont": "África", "moeda": "BWP · P / CNY · ¥ / EUR · € / GBP · £ / INR · ₹ / JPY · ¥ / USD · $ / ZAR · Rs / ZWB · $", "cc": "ZW"}];
+const CONTINENTES = ["África", "Américas", "Ásia", "Europa", "Oceania"];
+const METAIS = {
+  cobre: "radial-gradient(circle at 35% 30%, #f0b48c, #b8734a 48%, #6e3d22)",
+  ouro: "radial-gradient(circle at 35% 30%, #f6e2a8, #c9a25e 48%, #7d5f2c)",
+  prata: "radial-gradient(circle at 35% 30%, #ffffff, #c7ccd1 46%, #737a81)",
+  aluminio: "radial-gradient(circle at 35% 30%, #ffffff, #dfe2e5 50%, #9aa0a6)"
+};
+const CARTAO_MM = 85.6;
+
+const slug = s => s.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+const norm = s => String(s).normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase();
+const esc = s => String(s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+PAISES.forEach(p => { p.slug = slug(p.nome); const c = COLECAO[p.id]; p.set = (c && c.moedas && c.moedas.length) ? c : null; });
+const ordenar = ms => ms.slice().sort((a, b) => (a.ano - b.ano) || ((a.face || 0) - (b.face || 0)));
+const qtd = n => n === 1 ? t("moedas_1") : t("moedas_n", { n: n });
+const porSlug = Object.fromEntries(PAISES.map(p => [p.slug, p]));
+const porId = Object.fromEntries(PAISES.map(p => [p.id, p]));
+
+const store = {
+  get(k) { try { return localStorage.getItem(k); } catch (e) { return null; } },
+  set(k, v) { try { localStorage.setItem(k, v); } catch (e) {} }
+};
+let pxPorMm = parseFloat(store.get("pdf-pxmm")) || (96 / 25.4);
+
+function idiomaInicial() {
+  const salvo = store.get("pdf-lang");
+  if (salvo && T[salvo]) return salvo;
+  const prefs = (navigator.languages || [navigator.language || "pt"]).map(l => String(l).toLowerCase().slice(0, 2));
+  return prefs.find(l => T[l]) || "pt";
+}
+const estado = { q: "", st: "todos", cont: "Todos", lang: idiomaInicial() };
+
+const t = (k, vars) => {
+  let s = (T[estado.lang] && T[estado.lang][k] !== undefined) ? T[estado.lang][k] : T.pt[k];
+  if (vars) Object.keys(vars).forEach(v => { s = s.split("{" + v + "}").join(vars[v]); });
+  return s;
+};
+const tr = v => (v && typeof v === "object") ? (v[estado.lang] || v.pt || "") : (v || "");
+const locale = () => IDIOMAS.find(i => i.id === estado.lang).locale;
+
+let nomesRegiao = null;
+function nomePais(p) {
+  if (estado.lang === "pt") return p.nome;
+  try {
+    if (!nomesRegiao || nomesRegiao.lang !== estado.lang) nomesRegiao = { lang: estado.lang, dn: new Intl.DisplayNames([locale()], { type: "region" }) };
+    return nomesRegiao.dn.of(p.cc) || p.nome;
+  } catch (e) { return p.nome; }
+}
+/* Bandeiras em arquivo (pasta bandeiras/), porque o Windows não mostra emoji de bandeira. */
+const bandeira = (p, cls) => '<img class="bandeira' + (cls ? " " + cls : "") + '" src="bandeiras/' + p.cc.toLowerCase() + '.svg" alt="" loading="lazy" decoding="async">';
+const nomeCont = c => (t("cont")[c] || c);
+
+function textosFixos() {
+  document.documentElement.lang = locale();
+  document.querySelectorAll("[data-t]").forEach(el => { el.textContent = t(el.dataset.t); });
+  document.querySelectorAll("[data-th]").forEach(el => { el.innerHTML = t(el.dataset.th); });
+  document.querySelectorAll("[data-ta]").forEach(el => { el.setAttribute("aria-label", t(el.dataset.ta)); el.title = t(el.dataset.ta); });
+  document.getElementById("q").placeholder = t("busca");
+  document.getElementById("q").setAttribute("aria-label", t("busca"));
+  document.getElementById("st-chips").setAttribute("aria-label", t("g_situacao"));
+  document.getElementById("cont-chips").setAttribute("aria-label", t("g_continente"));
+  document.getElementById("langs").setAttribute("aria-label", t("g_idioma"));
+  document.getElementById("nav").setAttribute("aria-label", t("nav_paises"));
+  document.getElementById("copied").textContent = "";
+  document.getElementById("langs").innerHTML = IDIOMAS.map(i =>
+    '<button type="button" data-lang="' + i.id + '" lang="' + i.locale + '" aria-label="' + i.nome + '" aria-pressed="' + (i.id === estado.lang) + '">' + i.rotulo + '</button>').join("");
+  document.getElementById("nets").innerHTML = REDES.map(r => {
+    const icone = ICONES[String(r.rede).trim().toLowerCase()] || '<span class="sem-icone">' + esc(r.rede) + '</span>';
+    const rotulo = esc(r.rede + (r.usuario ? " " + r.usuario : ""));
+    return r.url
+      ? '<a class="net" href="' + esc(r.url) + '" target="_blank" rel="noopener" aria-label="' + rotulo + '" title="' + rotulo + '">' + icone + '</a>'
+      : '<span class="net soon" role="img" aria-label="' + rotulo + ' – ' + t("link_definir") + '" title="' + rotulo + ' – ' + t("link_definir") + '">' + icone + '</span>';
+  }).join("");
+}
+
+function contagem() {
+  const total = PAISES.length;
+  const com = PAISES.filter(p => p.set).length;
+  const todas = PAISES.flatMap(p => p.set ? p.set.moedas : []);
+  document.getElementById("t-num").innerHTML = com + "<span> / " + total + "</span>";
+  document.getElementById("t-moedas").textContent = todas.length;
+  document.getElementById("t-compradas").textContent = todas.filter(m => m.origem !== "ganhamos").length;
+  document.getElementById("t-presentes").textContent = todas.filter(m => m.origem === "ganhamos").length;
+  document.querySelector("#t-bar i").style.width = (com / total * 100) + "%";
+}
+
+function chipsContinente() {
+  const box = document.getElementById("cont-chips");
+  box.innerHTML = ["Todos"].concat(CONTINENTES).map(c =>
+    '<button class="chip" data-cont="' + c + '" aria-pressed="' + (c === estado.cont) + '">' + (c === "Todos" ? t("chip_todos") : nomeCont(c)) + '</button>').join("");
+}
+
+function lista() {
+  const q = norm(estado.q.trim());
+  const loc = locale();
+  const filtrados = PAISES.filter(p =>
+    (estado.cont === "Todos" || p.cont === estado.cont) &&
+    (estado.st === "todos" || (estado.st === "tem" ? !!p.set : !p.set)) &&
+    (!q || norm(nomePais(p)).includes(q) || norm(p.nome).includes(q) || norm(p.moeda).includes(q)))
+    .sort((a, b) => nomePais(a).localeCompare(nomePais(b), loc));
+  const out = document.getElementById("lista");
+  if (!filtrados.length) { out.innerHTML = '<p class="empty">' + t("vazio") + '</p>'; return; }
+  out.innerHTML = CONTINENTES.map(c => {
+    const ps = filtrados.filter(p => p.cont === c);
+    if (!ps.length) return "";
+    const tot = PAISES.filter(p => p.cont === c);
+    const tem = tot.filter(p => p.set).length;
+    return '<section class="continent"><h2>' + nomeCont(c) + ' <small>' + t("conta", { a: tem, b: tot.length }) + '</small></h2><div class="grid">' +
+      ps.map(p => {
+        const cls = p.set ? "has" : "missing";
+        const nome = nomePais(p);
+        return '<button class="slot ' + cls + '" data-slug="' + p.slug + '" aria-label="' + esc(nome) + ", " + (p.set ? qtd(p.set.moedas.length) : t("aria_falta")) + '">' +
+          '<span class="ring" aria-hidden="true">' + bandeira(p) + (p.set ? '<span class="badge">' + p.set.moedas.length + '</span>' : '') + '</span>' +
+          '<span><span class="nm">' + esc(nome) + '</span><br><span class="cur">' + esc(p.moeda) + '</span></span></button>';
+      }).join("") + '</div></section>';
+  }).join("");
+}
+
+const fmtMm = n => n.toLocaleString(locale(), { maximumFractionDigits: 2 });
+
+/* Polígono regular com uma ponta para cima, ocupando a largura indicada em mm (de ponta a ponta). */
+function poligono(n) {
+  const pts = [];
+  for (let i = 0; i < n; i++) {
+    const a = -Math.PI / 2 + i * 2 * Math.PI / n;
+    pts.push((50 + 50 * Math.cos(a)).toFixed(2) + "% " + (50 + 50 * Math.sin(a)).toFixed(2) + "%");
+  }
+  return "polygon(" + pts.join(", ") + ")";
+}
+
+function moedaHTML(m, alturaBox) {
+  const d = m.mm * pxPorMm;
+  let inner = "";
+  if (m.nucleo) { const n = d * 0.68; inner += '<span class="core" style="width:' + n + 'px;height:' + n + 'px;background:' + METAIS[m.nucleo] + '"></span>'; }
+  if (m.furo) { const f = m.furo * pxPorMm; inner += '<span class="hole" style="width:' + f + 'px;height:' + f + 'px"></span>'; }
+  const pd = m.presenteDe || {};
+  const origem = m.origem === "ganhamos"
+    ? '<div class="tag gift">' + (pd.autorizou && pd.nome ? t("tag_presente_de", { nome: esc(pd.nome) }) : t("tag_presente")) + '</div>'
+    : '<div class="tag">' + t("tag_comprada") + '</div>';
+  const valor = esc(tr(m.valor));
+  const foto = m.foto || {};
+  let moeda;
+  if (foto.frente) {
+    moeda = '<div class="coin foto' + (foto.verso ? ' flip" tabindex="0" role="button" aria-label="' + valor + ' – ' + t("dica_verso") + '"' : '"') +
+      ' style="width:' + d + 'px;height:' + d + 'px"><div class="lados"><img class="frente" src="' + esc(foto.frente) + '" alt="' + valor + '">' +
+      (foto.verso ? '<img class="verso" src="' + esc(foto.verso) + '" alt="">' : '') + '</div></div>';
+  } else {
+    const forma = m.formato === "quadrada" ? " quadrada" : (m.formato === "poligono" && m.lados >= 3 ? " poligono" : "");
+    const recorte = forma === " poligono" ? "clip-path:" + poligono(m.lados) + ";" : "";
+    moeda = '<div class="coin' + forma + '" style="width:' + d + 'px;height:' + d + 'px"><div class="face" style="' + recorte + 'background:' + (METAIS[m.metal] || METAIS.prata) + '">' + inner + '</div></div>';
+  }
+  return '<div class="coin-cell"><div class="coin-box" style="height:' + alturaBox + 'px">' + (m.especial ? '<div class="tag special">' + t("pill_especial") + '</div>' : '') +
+    moeda + '</div><div class="v">' + valor + '</div>' +
+    '<div class="mm">' + fmtMm(m.mm) + ' ' + t("mm") + '</div>' + origem + '</div>';
+}
+
+function linhaDoTempo(moedas) {
+  const grupos = [];
+  const alturaBox = Math.max.apply(null, moedas.map(m => m.mm)) * pxPorMm + 26;
+  ordenar(moedas).forEach(m => {
+    const g = grupos[grupos.length - 1];
+    if (g && g.ano === m.ano) g.moedas.push(m); else grupos.push({ ano: m.ano, moedas: [m] });
+  });
+  return '<div class="timeline">' + grupos.map(g =>
+    '<div class="era"><div class="coins">' + g.moedas.map(m => moedaHTML(m, alturaBox)).join("") + '</div><div class="year">' + g.ano + '</div></div>').join("") + '</div>';
+}
+
+function painel(p) {
+  const s = p.set;
+  const nome = nomePais(p);
+  let meta = nomeCont(p.cont) + ' · ' + esc(p.moeda);
+  if (s) {
+    const anos = s.moedas.map(m => m.ano);
+    const a = Math.min.apply(null, anos), b = Math.max.apply(null, anos);
+    meta += ' · ' + qtd(s.moedas.length) + ', ' + (a === b ? a : t("periodo", { a: a, b: b }));
+  }
+  let h = '<button class="close" id="fechar" aria-label="' + t("fechar") + '">✕</button>' +
+    '<div class="p-head"><span class="flag" aria-hidden="true">' + bandeira(p) + '</span><div>' +
+    '<h3 id="p-title">' + esc(nome) +
+    (s ? '' : '<span class="pill missing">' + t("pill_falta") + '</span>') +
+    (s && s.exemplo ? '<span class="pill exemplo">' + t("pill_exemplo") + '</span>' : "") + '</h3>' +
+    '<div class="meta">' + meta + '</div></div></div>';
+
+  if (s) {
+    h += '<div class="tray" id="coins">' + linhaDoTempo(s.moedas) + '</div>' +
+      '<div class="calib-row"><span>' + t("tamanho_real") + (s.moedas.some(m => m.foto && m.foto.frente && m.foto.verso) ? ' ' + t("dica_verso") : '') + '</span><button class="linkbtn" id="abrir-calib" type="button">' + t("ajustar") + '</button></div>' +
+      '<div class="calib" id="calib"><p>' + t("calib_p") + '</p>' +
+      '<div class="card-outline" id="card" aria-hidden="true">' + t("cartao", { mm: fmtMm(CARTAO_MM) }) + '</div>' +
+      '<label for="escala" class="row"><input id="escala" type="range" min="2" max="9" step="0.01" value="' + pxPorMm + '" aria-label="' + t("ajustar") + '"></label>' +
+      '<div class="row"><button class="btn ghost" id="reset-calib" type="button">' + t("padrao") + '</button></div></div>';
+    const comTexto = ordenar(s.moedas).filter(m => tr(m.texto));
+    if (comTexto.length) {
+      h += '<div class="textos">' + comTexto.map(m =>
+        '<article class="txt"><h4>' + esc(tr(m.valor)) + ' <span class="ano">' + m.ano + '</span>' +
+        (m.especial ? ' <span class="tag special">' + t("pill_especial") + '</span>' : '') + '</h4>' +
+        '<p>' + esc(tr(m.texto)) + '</p></article>').join("") + '</div>';
+    }
+    if (s.compra) {
+      h += s.compra.url
+        ? '<div class="buy"><a class="btn" href="' + esc(s.compra.url) + '" target="_blank" rel="noopener sponsored">' + t("comprar") + '</a><small>' + t("afiliado") + '</small></div>'
+        : '<div class="buy"><button class="btn" type="button" disabled>' + t("comprar") + '</button><small>' + t("afiliado_breve") + '</small></div>';
+    }
+  } else {
+    h += '<div class="want"><div class="slots" aria-hidden="true"><i></i><i></i><i></i></div><div>' +
+      '<p>' + t("falta_p", { pais: esc(nome) }) + '</p>' +
+      '<button class="btn" id="ir-envie" type="button">' + t("como_mandar") + '</button></div></div>';
+  }
+  return h;
+}
+
+function desenharCartao() {
+  const c = document.getElementById("card");
+  if (!c) return;
+  c.style.width = (CARTAO_MM * pxPorMm) + "px";
+  c.style.height = (53.98 * pxPorMm) + "px";
+}
+
+let aberto = null;
+let ultimoFoco = null;
+function abrir(p) {
+  const ov = document.getElementById("overlay");
+  const pn = document.getElementById("panel");
+  if (!ov.classList.contains("open")) ultimoFoco = document.activeElement;
+  aberto = p;
+  pn.innerHTML = painel(p);
+  ov.classList.add("open");
+  ov.setAttribute("aria-hidden", "false");
+  document.body.style.overflow = "hidden";
+  desenharCartao();
+  document.getElementById("fechar").focus();
+}
+function fechar(limparHash) {
+  const ov = document.getElementById("overlay");
+  if (!ov.classList.contains("open")) return;
+  aberto = null;
+  ov.classList.remove("open");
+  ov.setAttribute("aria-hidden", "true");
+  document.body.style.overflow = "";
+  if (limparHash && location.hash) history.replaceState(null, "", location.pathname + location.search);
+  if (ultimoFoco && ultimoFoco.focus) ultimoFoco.focus();
+}
+
+function mudarIdioma(id, salvar) {
+  if (!T[id]) return;
+  estado.lang = id;
+  if (salvar) store.set("pdf-lang", id);
+  textosFixos();
+  chipsContinente();
+  lista();
+  ranking();
+  if (aberto) { document.getElementById("panel").innerHTML = painel(aberto); desenharCartao(); }
+}
+
+/* Endereços aceitos: #japao, #en, #en-japao, #redes, #paises, #envie */
+function rota() {
+  let h = decodeURIComponent(location.hash.slice(1));
+  const m = h.match(/^(pt|en|es|zh|hi)(?:-(.+))?$/);
+  if (m) { if (m[1] !== estado.lang) mudarIdioma(m[1], true); h = m[2] || ""; }
+  const p = porSlug[h];
+  if (p) { abrir(p); return; }
+  fechar(false);
+  if (h === "envie" || h === "paises" || h === "redes" || h === "ranking") { const el = document.getElementById(h); if (el) el.scrollIntoView(); }
+}
+
+/* Rola até a seção sem animação (a rolagem animada falha em alguns visualizadores).
+   Tenta pela janela; se a página não se mexeu, usa o scrollIntoView do próprio elemento. */
+function irPara(id) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  const raiz = document.scrollingElement || document.documentElement;
+  const y = id === "topo" ? 0 : Math.max(0, el.getBoundingClientRect().top + raiz.scrollTop);
+  window.scrollTo(0, y);
+  raiz.scrollTop = y;
+  requestAnimationFrame(() => { if (Math.abs(el.getBoundingClientRect().top) > 4) el.scrollIntoView({ block: "start" }); });
+}
+
+function atualizarMoedas() {
+  const box = document.getElementById("coins");
+  if (aberto && aberto.set && box) box.innerHTML = linhaDoTempo(aberto.set.moedas);
+  desenharCartao();
+}
+
+let abaRanking = "dinheiro";
+function quem(c) {
+  const p = c.pais && porId[c.pais];
+  return '<span class="quem"><span class="nome">' + esc(c.nome) + '</span>' +
+    (p ? '<span class="nac">' + bandeira(p, "mini") + ' ' + esc(nomePais(p)) + '</span>' : '') + '</span>';
+}
+const chave = s => String(s).trim().toLowerCase();
+function acervoHTML() {
+  const itens = [];
+  PAISES.forEach(p => { if (!p.set) return; p.set.moedas.forEach(m => { if (m.origem === "ganhamos") itens.push({ p: p, m: m }); }); });
+  if (!itens.length) return '<p class="rank-vazio">' + t("vazio_acervo") + '</p>';
+  const loc = locale();
+  itens.sort((a, b) => nomePais(a.p).localeCompare(nomePais(b.p), loc) || (a.m.ano - b.m.ano) || ((a.m.face || 0) - (b.m.face || 0)));
+  return '<ol class="acervo"><li class="head"><span>' + t("col_num") + '</span><span>' + t("col_pais_un") + '</span><span>' + t("col_ano") + '</span><span>' + t("col_contrib") + '</span></li>' +
+    itens.map((it, i) => {
+      const pd = it.m.presenteDe || {};
+      const nac = pd.pais && porId[pd.pais];
+      const quemEnviou = pd.autorizou && pd.nome
+        ? esc(pd.nome) + (nac ? ' <span class="nac" title="' + esc(nomePais(nac)) + '">' + bandeira(nac, "mini") + '</span>' : '')
+        : '<span class="anon">' + t("anonimo") + '</span>';
+      return '<li><span class="val">' + esc(tr(it.m.valor)) + '</span><span>' + bandeira(it.p, "mini") + ' ' + esc(nomePais(it.p)) + '</span><span class="n">' + it.m.ano + '</span><span>' + quemEnviou + '</span></li>';
+    }).join("") + '</ol>';
+}
+
+function rankingHTML() {
+  if (abaRanking === "acervo") return acervoHTML();
+  const fmtR = v => { try { return new Intl.NumberFormat(locale(), { style: "currency", currency: "BRL" }).format(v); } catch (e) { return "R$ " + v; } };
+  if (abaRanking === "dinheiro") {
+    const por = {}; let anon = 0;
+    DOACOES.forEach(d => {
+      if (d.autorizou && d.nome) { const k = chave(d.nome); por[k] = por[k] || { nome: d.nome.trim(), total: 0 }; por[k].total += Number(d.valor) || 0; if (d.pais) por[k].pais = d.pais; }
+      else anon += Number(d.valor) || 0;
+    });
+    const lista = Object.values(por).sort((a, b) => b.total - a.total);
+    if (!lista.length && !anon) return '<p class="rank-vazio">' + t("vazio_dinheiro") + '</p>';
+    return (lista.length ? '<ol class="rank"><li class="head dois"><span>#</span><span>' + t("col_nome") + '</span><span class="num">' + t("col_total") + '</span></li>' +
+      lista.map((c, i) => '<li class="dois"><span class="pos">' + (i + 1) + '</span>' + quem(c) + '<span class="num">' + fmtR(c.total) + '</span></li>').join("") + '</ol>' : '') +
+      (anon ? '<p class="rank-extra">' + t("anon_dinheiro", { v: fmtR(anon) }) + '</p>' : '');
+  }
+  const por = {}; let anon = 0;
+  PAISES.forEach(p => { if (!p.set) return; p.set.moedas.forEach(m => {
+    if (m.origem !== "ganhamos") return;
+    const pd = m.presenteDe || {};
+    if (pd.autorizou && pd.nome) { const k = chave(pd.nome); por[k] = por[k] || { nome: pd.nome.trim(), moedas: 0, paises: new Set() }; por[k].moedas++; por[k].paises.add(p.id); if (pd.pais) por[k].pais = pd.pais; }
+    else anon++;
+  }); });
+  const lista = Object.values(por).sort((a, b) => (b.moedas - a.moedas) || (b.paises.size - a.paises.size));
+  if (!lista.length && !anon) return '<p class="rank-vazio">' + t("vazio_moedas") + '</p>';
+  return (lista.length ? '<ol class="rank"><li class="head"><span>#</span><span>' + t("col_nome") + '</span><span class="num">' + t("col_moedas") + '</span><span class="num">' + t("col_paises") + '</span></li>' +
+    lista.map((c, i) => '<li><span class="pos">' + (i + 1) + '</span>' + quem(c) + '<span class="num">' + c.moedas + '</span><span class="num">' + c.paises.size + '</span></li>').join("") + '</ol>' : '') +
+    (anon ? '<p class="rank-extra">' + t("anon_moedas", { q: qtd(anon) }) + '</p>' : '');
+}
+function ranking() {
+  document.querySelectorAll("[data-tab]").forEach(b => { b.setAttribute("aria-selected", b.dataset.tab === abaRanking); b.tabIndex = b.dataset.tab === abaRanking ? 0 : -1; });
+  const pn = document.getElementById("rank-painel");
+  pn.setAttribute("aria-labelledby", "tab-" + abaRanking);
+  pn.innerHTML = rankingHTML();
+}
+
+document.addEventListener("click", e => {
+  const fl = e.target.closest(".coin.flip");
+  if (fl) { fl.classList.toggle("virada"); return; }
+  const tb = e.target.closest("[data-tab]");
+  if (tb) { abaRanking = tb.dataset.tab; ranking(); return; }
+  const lg = e.target.closest("[data-lang]");
+  if (lg) { mudarIdioma(lg.dataset.lang, true); return; }
+  const slot = e.target.closest(".slot");
+  if (slot) { location.hash = slot.dataset.slug; return; }
+  const st = e.target.closest("[data-st]");
+  if (st) { estado.st = st.dataset.st; document.querySelectorAll("[data-st]").forEach(b => b.setAttribute("aria-pressed", b === st)); lista(); return; }
+  const ct = e.target.closest("[data-cont]");
+  if (ct) { estado.cont = ct.dataset.cont; document.querySelectorAll("[data-cont]").forEach(b => b.setAttribute("aria-pressed", b === ct)); lista(); return; }
+  const sc = e.target.closest("[data-scroll]");
+  if (sc) { e.preventDefault(); irPara(sc.dataset.scroll); return; }
+  if (e.target.id === "fechar" || e.target.id === "overlay") { fechar(true); return; }
+  if (e.target.id === "ir-envie") { fechar(true); irPara("envie"); return; }
+  if (e.target.id === "abrir-calib") { document.getElementById("calib").classList.toggle("open"); desenharCartao(); return; }
+  if (e.target.id === "reset-calib") { pxPorMm = 96 / 25.4; store.set("pdf-pxmm", pxPorMm); atualizarMoedas(); document.getElementById("escala").value = pxPorMm; return; }
+  if (e.target.id === "copy-addr") {
+    const txt = ENDERECO.join("\n");
+    const ok = () => { document.getElementById("copied").textContent = t("copiado"); };
+    const falha = () => { document.getElementById("copied").textContent = t("copiar_falha"); };
+    try { navigator.clipboard.writeText(txt).then(ok, falha); } catch (err) { falha(); }
+  }
+});
+
+document.addEventListener("input", e => {
+  if (e.target.id === "q") { estado.q = e.target.value; lista(); }
+  if (e.target.id === "escala") { pxPorMm = parseFloat(e.target.value); store.set("pdf-pxmm", pxPorMm); atualizarMoedas(); }
+});
+document.addEventListener("keydown", e => {
+  if (e.key === "Escape") fechar(true);
+  if ((e.key === "Enter" || e.key === " ") && e.target.matches && e.target.matches(".coin.flip")) { e.preventDefault(); e.target.classList.toggle("virada"); }
+  if (e.target.matches && e.target.matches("[data-tab]") && (e.key === "ArrowRight" || e.key === "ArrowLeft")) {
+    const abas = ["dinheiro", "moedas", "acervo"];
+    abaRanking = abas[(abas.indexOf(abaRanking) + (e.key === "ArrowRight" ? 1 : 2)) % 3]; ranking(); document.getElementById("tab-" + abaRanking).focus();
+  }
+});
+window.addEventListener("hashchange", rota);
+
+document.getElementById("endereco").innerHTML = ENDERECO.map(esc).join("<br>");
+textosFixos();
+contagem();
+chipsContinente();
+lista();
+ranking();
+rota();
+</script>
+</body>
+</html>
