@@ -40,18 +40,29 @@ a { color: var(--brass); }
 
 /* Cabeçalho */
 header.top { border-bottom: 1px solid var(--line); }
-header.top .wrap { display: grid; grid-template-columns: 1fr auto; grid-template-areas: "logo langs" "nav langs"; align-items: start; gap: 8px 16px; padding-top: 16px; padding-bottom: 20px; }
+header.top .wrap { display: grid; grid-template-columns: auto 1fr auto; grid-template-areas: "logo redes langs" "nav nav langs"; align-items: start; gap: 8px 16px; padding-top: 16px; padding-bottom: 20px; }
 .logo { grid-area: logo; justify-self: start; font-family: "Sora", "Avenir Next", "Segoe UI", sans-serif; font-weight: 700; font-size: clamp(42px, 6.8vw, 76px); letter-spacing: -0.02em; text-decoration: none; display: inline-flex; align-items: baseline; }
 .logo .pilas { color: var(--brass); }
 .logo .defora { color: var(--text); display: inline-flex; align-items: baseline; }
 .logo svg { color: var(--brass); width: 0.62em; height: 0.62em; margin: 0 0.02em; transform: translateY(0.02em); }
+.nets.nets-topo { grid-area: redes; align-self: center; justify-self: start; display: grid; grid-template-columns: repeat(2, auto); gap: 10px 12px; margin-left: 10px; }
+.nets.nets-topo .net svg { width: 24px; height: 24px; }
+.nets-topo .net .sem-icone { font-size: 16px; }
+@media (max-width: 520px) {
+  header.top .wrap { grid-template-columns: 1fr auto; grid-template-areas: "logo langs" "redes langs" "nav langs"; }
+  .nets.nets-topo { grid-template-columns: repeat(4, auto); gap: 16px; margin: 2px 0 0; align-self: start; }
+  .nets.nets-topo .net svg { width: 22px; height: 22px; }
+}
 .langs { grid-area: langs; display: flex; flex-direction: column; gap: 4px; padding-top: 4px; }
 .langs button { min-width: 64px; text-align: center; background: transparent; color: var(--muted); border: 1px solid var(--line); border-radius: 8px; padding: 6px 10px; font: inherit; font-size: 14px; font-weight: 600; cursor: pointer; }
 .langs button:hover { color: var(--text); border-color: var(--muted); }
 .langs button[aria-pressed="true"] { background: var(--brass); color: #1a1407; border-color: var(--brass); }
-nav.top { grid-area: nav; display: flex; flex-direction: column; align-items: flex-start; gap: 2px; }
-nav.top a { color: var(--muted); text-decoration: none; font-family: var(--display); font-weight: 300; font-size: clamp(26px, 4vw, 44px); letter-spacing: -0.03em; line-height: 1.15; }
+nav.top { grid-area: nav; display: flex; flex-wrap: wrap; align-items: flex-end; gap: 6px 28px; margin-top: 8px; }
+nav.top a { color: var(--muted); text-decoration: none; font-family: var(--display); font-weight: 300; font-size: clamp(22px, 2.8vw, 32px); letter-spacing: -0.02em; line-height: 1.2; padding-bottom: 6px; border-bottom: 2px solid transparent; }
 nav.top a:hover { color: var(--text); }
+nav.top a[aria-current="page"] { color: var(--text); font-weight: 600; border-bottom-color: var(--brass); }
+/* Abas: só a parte escolhida no menu aparece */
+.aba[hidden] { display: none !important; }
 
 /* Abertura */
 .hero { padding: 40px 0 32px; border-top: 1px solid var(--line); display: grid; grid-template-columns: 1.75fr 1fr; gap: 32px; align-items: end; }
@@ -87,6 +98,9 @@ a.net:hover { color: #e3c07f; transform: translateY(-2px); }
 .sec-head h2 { display: inline; margin: 0 !important; }
 .topo { display: inline-grid; place-items: center; vertical-align: middle; position: relative; top: -0.15em; margin-left: 14px; width: 40px; height: 40px; border-radius: 50%; border: 1px solid var(--brass); background: transparent; color: var(--brass); cursor: pointer; padding: 0; transition: background .15s, color .15s; }
 .topo svg { width: 20px; height: 20px; }
+.fim-secao { display: flex; justify-content: center; margin: 32px 0 8px; }
+.fim-secao .topo { margin-left: 0; top: 0; }
+.send .fim-secao { grid-column: 1 / -1; margin-top: 0; }
 .topo:hover { background: var(--brass); color: #1a1407; }
 
 /* Filtros */
@@ -192,8 +206,64 @@ a.net:hover { color: #e3c07f; transform: translateY(-2px); }
 .want .slots i:nth-child(3) { width: 38px; height: 38px; }
 .want p { margin: 0 0 12px; }
 
+
+/* Apoie */
+.apoie { padding: 40px 0 24px; }
+.apoie h2 { font-family: var(--display); font-weight: 300; font-size: clamp(30px, 4.4vw, 46px); line-height: 1.1; letter-spacing: -0.03em; text-wrap: balance; }
+.apoie h2 strong { font-weight: 800; color: var(--brass); }
+.ap-top { display: grid; grid-template-columns: 1fr; gap: 32px; align-items: start; }
+.ap-top.com-video { grid-template-columns: 1.25fr 1fr; }
+.ap-top.com-video.vertical { grid-template-columns: 1fr 300px; }
+.ap-lead { font-size: 19px; line-height: 1.55; max-width: 62ch; margin: 0 0 24px; }
+.pilares { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+.pilar { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 16px 18px; }
+.pilar h4 { margin: 0 0 6px; font-family: var(--display); font-weight: 600; font-size: 17px; color: var(--brass); }
+.pilar p { margin: 0; color: var(--muted); font-size: 14px; }
+.ap-video { border: 1px solid var(--line); border-radius: 14px; overflow: hidden; background: #0d0e10; aspect-ratio: 16 / 9; }
+.ap-video.vertical { aspect-ratio: 9 / 16; }
+.ap-video iframe { width: 100%; height: 100%; border: 0; display: block; }
+.ap-status { margin: 24px 0 0; color: var(--muted); font-size: 14px; border-left: 2px solid var(--copper); padding-left: 12px; max-width: 75ch; }
+.ap-h3 { font-family: var(--display); font-weight: 600; font-size: 24px; letter-spacing: -0.01em; margin: 48px 0 6px; }
+.ap-sub { color: var(--muted); margin: 0 0 18px; max-width: 70ch; }
+.formas { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.forma { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 22px; display: flex; flex-direction: column; gap: 12px; align-items: flex-start; }
+.forma h4 { margin: 0; font-family: var(--display); font-weight: 700; font-size: 22px; letter-spacing: -0.01em; }
+.forma p { margin: 0; color: var(--muted); }
+.forma .acoes { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-top: auto; }
+.pix { width: 100%; }
+.pix .tag { font-size: 12px; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); margin-bottom: 4px; }
+.pix code { display: block; font-family: var(--body); font-size: 17px; color: var(--text); word-break: break-all; margin-bottom: 10px; }
+.niveis { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 14px; }
+.nivel { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 20px; display: flex; flex-direction: column; gap: 8px; }
+.nivel.topo-nivel { border-color: var(--brass-deep); }
+.nivel .metal { display: flex; align-items: center; gap: 10px; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); }
+.nivel .metal i { width: 34px; height: 34px; border-radius: 50%; display: block; box-shadow: inset 0 0 0 1px rgba(255,255,255,.18), 0 2px 4px rgba(0,0,0,.5); }
+.nivel h4 { margin: 4px 0 0; font-family: var(--display); font-weight: 700; font-size: 19px; letter-spacing: -0.01em; }
+.nivel .desc { margin: 0; color: var(--muted); font-size: 14px; }
+.nivel .preco { margin: 0; color: var(--brass); font-weight: 600; font-variant-numeric: tabular-nums; }
+.nivel ul { margin: 6px 0 0; padding: 0; list-style: none; display: grid; gap: 6px; font-size: 14px; }
+.nivel li { padding-left: 18px; position: relative; }
+.nivel li::before { content: ""; position: absolute; left: 2px; top: .55em; width: 7px; height: 7px; border-radius: 50%; background: var(--brass); }
+.mantenedores { display: flex; flex-wrap: wrap; gap: 10px 22px; margin: 0; padding: 0; list-style: none; font-family: var(--display); font-weight: 600; font-size: 18px; }
+.mantenedores a { color: var(--text); text-decoration: none; border-bottom: 1px solid var(--brass-deep); }
+.contato { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+.contato .btn svg, .btn .ico { width: 18px; height: 18px; vertical-align: -3px; margin-right: 8px; }
+.contato-redes { margin: 0; color: var(--muted); }
+.pdf-row { margin-top: 18px; }
+.fale { padding: 0 0 24px; }
+.fale .ap-h3 { margin-top: 8px; }
+
+/* Links e patrocínio por moeda */
+.txt-links { display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: center; margin-top: 10px; }
+.txt-links a.mais { font-size: 14px; text-underline-offset: 3px; }
+.btn.sm { padding: 7px 13px; font-size: 14px; border-radius: 8px; }
+.patro { display: inline-block; margin-left: 8px; font-family: var(--body); font-weight: 400; font-size: 13px; color: var(--silver); border: 1px solid var(--line); border-radius: 99px; padding: 1px 9px; vertical-align: 2px; }
+.patro a { color: var(--silver); }
+.set-patro { margin-top: 4px; color: var(--silver); font-size: 14px; }
+.set-patro a { color: var(--silver); }
+
 /* Envie */
-.send { margin: 72px 0 0; border-top: 1px solid var(--line); padding: 56px 0 24px; display: grid; grid-template-columns: 1fr 1fr; gap: 40px; }
+.send { padding: 40px 0 24px; display: grid; grid-template-columns: 1fr 1fr; gap: 40px; }
 .send ol { padding-left: 20px; margin: 0; display: grid; gap: 12px; }
 .send ol li::marker { color: var(--brass); font-family: "Sora", sans-serif; font-weight: 700; }
 .address { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 22px; align-self: start; }
@@ -203,8 +273,7 @@ a.net:hover { color: #e3c07f; transform: translateY(-2px); }
 .copied { color: var(--brass); font-size: 13px; margin-left: 10px; }
 
 /* Ranking */
-.ranking { margin: 56px 0 0; border-top: 1px solid var(--line); padding-top: 56px; min-height: 100vh; min-height: 100svh; }
-/* altura mínima: por ser a última seção, sem ela o menu não consegue trazer o ranking para o topo da tela */
+.ranking { padding: 40px 0 24px; }
 .ranking h2 { font-family: var(--display); font-weight: 300; font-size: clamp(30px, 4.4vw, 46px); line-height: 1.1; letter-spacing: -0.03em; margin: 0 0 24px; text-wrap: balance; }
 .ranking h2 strong { font-weight: 800; color: var(--brass); }
 .tabs { display: flex; gap: 4px; border-bottom: 1px solid var(--line); margin-bottom: 8px; }
@@ -238,6 +307,8 @@ footer { color: var(--muted); font-size: 13px; border-top: 1px solid var(--line)
 @media (max-width: 760px) {
   .hero { grid-template-columns: 1fr; gap: 24px; padding-top: 32px; }
   .send { grid-template-columns: 1fr; }
+  .ap-top.com-video, .ap-top.com-video.vertical, .pilares, .formas { grid-template-columns: 1fr; }
+  .ap-video.vertical { max-width: 300px; }
   .want { grid-template-columns: 1fr; }
   .panel { padding: 20px 16px; }
 }
@@ -254,20 +325,20 @@ footer { color: var(--muted); font-size: 13px; border-top: 1px solid var(--line)
     <a class="logo" href="#" aria-label="Pilas de Fora">
       <span class="pilas">pilas</span><span class="defora">def<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9.2" fill="none" stroke="currentColor" stroke-width="3.4"/><ellipse cx="12" cy="12" rx="4" ry="9.2" fill="none" stroke="currentColor" stroke-width="1.8"/><line x1="3" y1="12" x2="21" y2="12" stroke="currentColor" stroke-width="1.8"/></svg>ra</span>
     </a>
+    <div class="nets nets-topo" id="nets-topo"></div>
     <div class="langs" role="group" id="langs"></div>
     <nav class="top" id="nav">
-      <a href="#paises" data-scroll="paises" data-t="nav_paises"></a>
-      <a href="#envie" data-scroll="envie" data-t="nav_envie"></a>
-      <a href="#ranking" data-scroll="ranking" data-t="nav_ranking"></a>
+      <a href="#paises" data-aba-link="paises" data-t="nav_paises"></a>
+      <a href="#envie" data-aba-link="envie" data-t="nav_envie"></a>
+      <a href="#ranking" data-aba-link="ranking" data-t="nav_ranking"></a>
+      <a href="#apoie" data-aba-link="apoie" data-t="nav_apoie"></a>
+      <a href="#contato" data-aba-link="contato" data-t="nav_contato"></a>
     </nav>
   </div>
 </header>
 
 <main class="wrap">
-  <section class="social" id="redes">
-    <h2 data-th="social_h2"></h2>
-    <div class="nets" id="nets"></div>
-  </section>
+  <div class="aba" data-aba="paises">
 
   <section class="hero">
     <div>
@@ -300,10 +371,18 @@ footer { color: var(--muted); font-size: 13px; border-top: 1px solid var(--line)
 
   <div id="lista"></div>
   </section>
+  <div class="fim-secao"><button type="button" class="topo" data-scroll="topo" data-ta="voltar_menu"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M6 12l6-6 6 6M6 19l6-6 6 6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button></div>
+  </div>
 
-  <section class="send" id="envie">
+  <section class="apoie aba" id="apoie" data-aba="apoie" hidden>
+    <div class="sec-head"><h2 data-th="apoie_h2"></h2></div>
+    <div id="apoie-corpo"></div>
+    <div class="fim-secao"><button type="button" class="topo" data-scroll="topo" data-ta="voltar_menu"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M6 12l6-6 6 6M6 19l6-6 6 6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button></div>
+  </section>
+
+  <section class="send aba" id="envie" data-aba="envie" hidden>
     <div>
-      <div class="sec-head"><h2 data-th="envie_h2"></h2><button type="button" class="topo" data-scroll="topo" data-ta="voltar_menu"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M6 12l6-6 6 6M6 19l6-6 6 6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button></div>
+      <div class="sec-head"><h2 data-th="envie_h2"></h2></div>
       <ol>
         <li data-th="passo1"></li>
         <li data-th="passo2"></li>
@@ -317,18 +396,31 @@ footer { color: var(--muted); font-size: 13px; border-top: 1px solid var(--line)
       <button class="btn ghost" id="copy-addr" type="button" data-t="copiar"></button><span class="copied" id="copied" role="status"></span>
       <p class="note" data-t="nota"></p>
     </div>
+    <div class="fim-secao"><button type="button" class="topo" data-scroll="topo" data-ta="voltar_menu"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M6 12l6-6 6 6M6 19l6-6 6 6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button></div>
   </section>
 
-  <section class="ranking" id="ranking">
-    <div class="sec-head"><h2 data-th="rank_h2"></h2><button type="button" class="topo" data-scroll="topo" data-ta="voltar_menu"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M6 12l6-6 6 6M6 19l6-6 6 6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button></div>
+  <section class="ranking aba" id="ranking" data-aba="ranking" hidden>
+    <div class="sec-head"><h2 data-th="rank_h2"></h2></div>
     <div class="tabs" role="tablist" id="rank-tabs">
-      <button role="tab" id="tab-dinheiro" data-tab="dinheiro" aria-selected="true" aria-controls="rank-painel" data-t="tab_dinheiro"></button>
-      <button role="tab" id="tab-moedas" data-tab="moedas" aria-selected="false" aria-controls="rank-painel" data-t="tab_moedas"></button>
+      <button role="tab" id="tab-moedas" data-tab="moedas" aria-selected="true" aria-controls="rank-painel" data-t="tab_moedas"></button>
       <button role="tab" id="tab-acervo" data-tab="acervo" aria-selected="false" aria-controls="rank-painel" data-t="tab_acervo"></button>
+      <button role="tab" id="tab-dinheiro" data-tab="dinheiro" aria-selected="false" aria-controls="rank-painel" data-t="tab_dinheiro"></button>
     </div>
     <div id="rank-painel" role="tabpanel"></div>
     <p class="rank-nota" data-t="rank_nota"></p>
+    <div class="fim-secao"><button type="button" class="topo" data-scroll="topo" data-ta="voltar_menu"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M6 12l6-6 6 6M6 19l6-6 6 6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button></div>
   </section>
+
+  <div class="aba aba-contato" id="contato" data-aba="contato" hidden>
+    <section class="social" id="redes">
+      <div class="sec-head"><h2 data-th="social_h2"></h2></div>
+      <div class="nets" id="nets"></div>
+    </section>
+    <section class="fale" id="fale">
+      <div id="contato-corpo"></div>
+    </section>
+    <div class="fim-secao"><button type="button" class="topo" data-scroll="topo" data-ta="voltar_menu"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M6 12l6-6 6 6M6 19l6-6 6 6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button></div>
+  </div>
 </main>
 
 
@@ -344,11 +436,12 @@ footer { color: var(--muted); font-size: 13px; border-top: 1px solid var(--line)
    ============================================================ */
 
 /* Os dados vêm do arquivo dados.json, editado pelo app de administração (app.py). */
-const DADOS = {"endereco": ["pilasdefora", "Rua Nunes, 340, apto. 407", "Medianeira", "Porto Alegre – RS", "CEP 90870-390", "Brasil"], "redes": [{"rede": "Instagram", "usuario": "@pilasdefora", "url": "https://www.instagram.com/pilasdefora/"}, {"rede": "Facebook", "usuario": "pilasdefora", "url": "https://www.facebook.com/profile.php?id=61596717114828"}, {"rede": "TikTok", "usuario": "@pilasdefora", "url": "https://www.tiktok.com/@pilasdefora"}, {"rede": "YouTube", "usuario": "@pilasdefora", "url": "https://www.youtube.com/@pilasdefora"}], "doacoes": [], "colecao": {}};
+const DADOS = {"endereco": ["pilasdefora", "Rua Nunes, 340, apto. 407", "Medianeira", "Porto Alegre – RS", "CEP 90870-390", "Brasil"], "redes": [{"rede": "Instagram", "usuario": "@pilasdefora", "url": "", "idiomas": ["pt", "en", "es", "hi"]}, {"rede": "Instagram", "usuario": "@pilasdefora.zh", "url": "", "idiomas": ["zh"]}, {"rede": "Facebook", "usuario": "Pilas de Fora", "url": ""}, {"rede": "TikTok", "usuario": "@pilasdefora", "url": "", "idiomas": ["pt", "en", "es", "zh"]}, {"rede": "YouTube", "usuario": "@pilasdefora", "url": ""}], "doacoes": [], "colecao": {}, "apoio": {"cnpj": "", "pix": "", "doacao_url": "", "email": "contato@pilasdefora.com.br", "whatsapp": "", "formulario": "", "video": "", "valores": {"amigo": "", "moeda": "", "pais": "", "mantenedor": ""}, "mantenedores": []}};
 const ENDERECO = DADOS.endereco || [];
 const REDES = DADOS.redes || [];
 const DOACOES = DADOS.doacoes || [];
 const COLECAO = DADOS.colecao || {};
+const APOIO = DADOS.apoio || {};
 const ICONES = {"facebook": "<svg fill=\"currentColor\" aria-hidden=\"true\" focusable=\"false\" viewBox=\"0 0 24 24\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M9.101 23.691v-7.98H6.627v-3.667h2.474v-1.58c0-4.085 1.848-5.978 5.858-5.978.401 0 .955.042 1.468.103a8.68 8.68 0 0 1 1.141.195v3.325a8.623 8.623 0 0 0-.653-.036 26.805 26.805 0 0 0-.733-.009c-.707 0-1.259.096-1.675.309a1.686 1.686 0 0 0-.679.622c-.258.42-.374.995-.374 1.752v1.297h3.919l-.386 2.103-.287 1.564h-3.246v8.245C19.396 23.238 24 18.179 24 12.044c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.628 3.874 10.35 9.101 11.647Z\"/><\/svg>", "instagram": "<svg fill=\"currentColor\" aria-hidden=\"true\" focusable=\"false\" viewBox=\"0 0 24 24\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M7.0301.084c-1.2768.0602-2.1487.264-2.911.5634-.7888.3075-1.4575.72-2.1228 1.3877-.6652.6677-1.075 1.3368-1.3802 2.127-.2954.7638-.4956 1.6365-.552 2.914-.0564 1.2775-.0689 1.6882-.0626 4.947.0062 3.2586.0206 3.6671.0825 4.9473.061 1.2765.264 2.1482.5635 2.9107.308.7889.72 1.4573 1.388 2.1228.6679.6655 1.3365 1.0743 2.1285 1.38.7632.295 1.6361.4961 2.9134.552 1.2773.056 1.6884.069 4.9462.0627 3.2578-.0062 3.668-.0207 4.9478-.0814 1.28-.0607 2.147-.2652 2.9098-.5633.7889-.3086 1.4578-.72 2.1228-1.3881.665-.6682 1.0745-1.3378 1.3795-2.1284.2957-.7632.4966-1.636.552-2.9124.056-1.2809.0692-1.6898.063-4.948-.0063-3.2583-.021-3.6668-.0817-4.9465-.0607-1.2797-.264-2.1487-.5633-2.9117-.3084-.7889-.72-1.4568-1.3876-2.1228C21.2982 1.33 20.628.9208 19.8378.6165 19.074.321 18.2017.1197 16.9244.0645 15.6471.0093 15.236-.005 11.977.0014 8.718.0076 8.31.0215 7.0301.0839m.1402 21.6932c-1.17-.0509-1.8053-.2453-2.2287-.408-.5606-.216-.96-.4771-1.3819-.895-.422-.4178-.6811-.8186-.9-1.378-.1644-.4234-.3624-1.058-.4171-2.228-.0595-1.2645-.072-1.6442-.079-4.848-.007-3.2037.0053-3.583.0607-4.848.05-1.169.2456-1.805.408-2.2282.216-.5613.4762-.96.895-1.3816.4188-.4217.8184-.6814 1.3783-.9003.423-.1651 1.0575-.3614 2.227-.4171 1.2655-.06 1.6447-.072 4.848-.079 3.2033-.007 3.5835.005 4.8495.0608 1.169.0508 1.8053.2445 2.228.408.5608.216.96.4754 1.3816.895.4217.4194.6816.8176.9005 1.3787.1653.4217.3617 1.056.4169 2.2263.0602 1.2655.0739 1.645.0796 4.848.0058 3.203-.0055 3.5834-.061 4.848-.051 1.17-.245 1.8055-.408 2.2294-.216.5604-.4763.96-.8954 1.3814-.419.4215-.8181.6811-1.3783.9-.4224.1649-1.0577.3617-2.2262.4174-1.2656.0595-1.6448.072-4.8493.079-3.2045.007-3.5825-.006-4.848-.0608M16.953 5.5864A1.44 1.44 0 1 0 18.39 4.144a1.44 1.44 0 0 0-1.437 1.4424M5.8385 12.012c.0067 3.4032 2.7706 6.1557 6.173 6.1493 3.4026-.0065 6.157-2.7701 6.1506-6.1733-.0065-3.4032-2.771-6.1565-6.174-6.1498-3.403.0067-6.156 2.771-6.1496 6.1738M8 12.0077a4 4 0 1 1 4.008 3.9921A3.9996 3.9996 0 0 1 8 12.0077\"/><\/svg>", "tiktok": "<svg fill=\"currentColor\" aria-hidden=\"true\" focusable=\"false\" viewBox=\"0 0 24 24\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z\"/><\/svg>", "youtube": "<svg fill=\"currentColor\" aria-hidden=\"true\" focusable=\"false\" viewBox=\"0 0 24 24\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z\"/><\/svg>"};
 
 /* ============================================================
@@ -364,19 +457,19 @@ const IDIOMAS = [
 
 const T = {
   pt: {
-    nav_redes: "Redes", nav_paises: "Países", nav_envie: "Mande uma moeda", nav_ranking: "Ranking", voltar_menu: "Voltar ao menu",
+    nav_redes: "Redes", nav_paises: "Países", nav_envie: "Mande uma moeda", nav_ranking: "Ranking", nav_contato: "Contato", voltar_menu: "Voltar ao menu",
     h1: "As moedas do mundo, <strong>país por país</strong>.",
-    hero_p: "O álbum do canal: cada país tem um encaixe. Os cheios já estão na coleção, com as moedas em tamanho real. Os vazios ainda esperam uns pilas de fora.",
+    hero_p: "O álbum do canal: cada país tem sua seção. Países com alguma moeda já estão na coleção. Os vazios ainda esperam uns pilas de fora.",
     tally_lbl: "países na coleção", leg_temos: "Compramos", leg_ganhamos: "Ganhamos", leg_faltam: "Faltam",
     social_h2: "Um vídeo para cada moeda. <strong>Siga o canal.</strong>",
     abrir_perfil: "Abrir perfil →", link_definir: "Link a definir",
     busca: "Buscar país ou moeda (ex.: Japão, EUR)",
-    chip_todos: "Todos", chip_tem: "Na coleção", chip_falta: "Faltando",
+    chip_todos: "Todos", chip_tem: "Na coleção", chip_falta: "Vazios",
     g_situacao: "Situação", g_continente: "Continente", g_idioma: "Idioma",
     cont: { "África": "África", "Américas": "Américas", "Ásia": "Ásia", "Europa": "Europa", "Oceania": "Oceania" },
     conta: "{a} de {b}", vazio: "Nenhum país encontrado com esses filtros.",
-    aria_tem: "na coleção", aria_falta: "faltando",
-    pill_temos: "Compramos", pill_ganhamos: "Ganhamos", pill_falta: "Faltando", pill_exemplo: "Exemplo",
+    aria_tem: "na coleção", aria_falta: "vazio",
+    pill_temos: "Compramos", pill_ganhamos: "Ganhamos", pill_falta: "Vazio", pill_exemplo: "Exemplo",
     tamanho_real: "Moedas em tamanho real.", ajustar: "Ajustar à sua tela",
     calib_p: "Encoste um cartão de banco na tela e mova o controle até o retângulo ficar do mesmo tamanho do cartão. O ajuste fica salvo neste navegador.",
     cartao: "cartão ({mm} mm)", padrao: "Voltar ao padrão", mm: "mm",
@@ -399,19 +492,19 @@ const T = {
     rodape: "Alguns botões de compra são links de afiliado: se você comprar por eles, o canal recebe uma comissão, sem custo extra para você. Tamanhos em milímetros conforme as especificações oficiais de cada moeda."
   },
   en: {
-    nav_redes: "Follow", nav_paises: "Countries", nav_envie: "Send a coin", nav_ranking: "Ranking", voltar_menu: "Back to menu",
+    nav_redes: "Follow", nav_paises: "Countries", nav_envie: "Send a coin", nav_ranking: "Ranking", nav_contato: "Contact", voltar_menu: "Back to menu",
     h1: "The world's coins, <strong>country by country</strong>.",
-    hero_p: "The channel's album: every country has a slot. The full ones are already in the collection, with the coins at real size. The empty ones are still waiting for coins from abroad.",
+    hero_p: "The channel’s album: every country has its own section. Countries with at least one coin are already in the collection. The empty ones are still waiting for coins from abroad.",
     tally_lbl: "countries in the collection", leg_temos: "Bought", leg_ganhamos: "Gifted", leg_faltam: "Missing",
     social_h2: "One video for every coin. <strong>Follow the channel.</strong>",
     abrir_perfil: "Open profile →", link_definir: "Link coming soon",
     busca: "Search a country or currency (e.g. Japan, EUR)",
-    chip_todos: "All", chip_tem: "In the collection", chip_falta: "Missing",
+    chip_todos: "All", chip_tem: "In the collection", chip_falta: "Empty",
     g_situacao: "Status", g_continente: "Continent", g_idioma: "Language",
     cont: { "África": "Africa", "Américas": "Americas", "Ásia": "Asia", "Europa": "Europe", "Oceania": "Oceania" },
     conta: "{a} of {b}", vazio: "No country matches these filters.",
-    aria_tem: "in the collection", aria_falta: "missing",
-    pill_temos: "Bought", pill_ganhamos: "Gifted", pill_falta: "Missing", pill_exemplo: "Example",
+    aria_tem: "in the collection", aria_falta: "empty",
+    pill_temos: "Bought", pill_ganhamos: "Gifted", pill_falta: "Empty", pill_exemplo: "Example",
     tamanho_real: "Coins at real size.", ajustar: "Fit to your screen",
     calib_p: "Hold a bank card against the screen and move the slider until the rectangle matches the card. The setting is saved in this browser.",
     cartao: "card ({mm} mm)", padrao: "Reset to default", mm: "mm",
@@ -434,19 +527,19 @@ const T = {
     rodape: "Some buy buttons are affiliate links: if you buy through them, the channel earns a commission at no extra cost to you. Sizes in millimetres, from each coin's official specifications."
   },
   es: {
-    nav_redes: "Redes", nav_paises: "Países", nav_envie: "Envía una moneda", nav_ranking: "Ranking", voltar_menu: "Volver al menú",
+    nav_redes: "Redes", nav_paises: "Países", nav_envie: "Envía una moneda", nav_ranking: "Ranking", nav_contato: "Contacto", voltar_menu: "Volver al menú",
     h1: "Las monedas del mundo, <strong>país por país</strong>.",
-    hero_p: "El álbum del canal: cada país tiene su hueco. Los llenos ya están en la colección, con las monedas a tamaño real. Los vacíos todavía esperan monedas de fuera.",
+    hero_p: "El álbum del canal: cada país tiene su sección. Los países con alguna moneda ya están en la colección. Los vacíos todavía esperan monedas de fuera.",
     tally_lbl: "países en la colección", leg_temos: "Compradas", leg_ganhamos: "Regaladas", leg_faltam: "Faltan",
     social_h2: "Un video para cada moneda. <strong>Sigue el canal.</strong>",
     abrir_perfil: "Abrir perfil →", link_definir: "Enlace próximamente",
     busca: "Buscar país o moneda (ej.: Japón, EUR)",
-    chip_todos: "Todos", chip_tem: "En la colección", chip_falta: "Faltan",
+    chip_todos: "Todos", chip_tem: "En la colección", chip_falta: "Vacíos",
     g_situacao: "Estado", g_continente: "Continente", g_idioma: "Idioma",
     cont: { "África": "África", "Américas": "Américas", "Ásia": "Asia", "Europa": "Europa", "Oceania": "Oceanía" },
     conta: "{a} de {b}", vazio: "Ningún país coincide con estos filtros.",
-    aria_tem: "en la colección", aria_falta: "falta",
-    pill_temos: "Comprada", pill_ganhamos: "Regalada", pill_falta: "Falta", pill_exemplo: "Ejemplo",
+    aria_tem: "en la colección", aria_falta: "vacío",
+    pill_temos: "Comprada", pill_ganhamos: "Regalada", pill_falta: "Vacío", pill_exemplo: "Ejemplo",
     tamanho_real: "Monedas a tamaño real.", ajustar: "Ajustar a tu pantalla",
     calib_p: "Apoya una tarjeta bancaria en la pantalla y mueve el control hasta que el rectángulo tenga el mismo tamaño que la tarjeta. El ajuste se guarda en este navegador.",
     cartao: "tarjeta ({mm} mm)", padrao: "Volver al predeterminado", mm: "mm",
@@ -469,19 +562,19 @@ const T = {
     rodape: "Algunos botones de compra son enlaces de afiliado: si compras con ellos, el canal recibe una comisión sin costo extra para ti. Tamaños en milímetros, según las especificaciones oficiales de cada moneda."
   },
   zh: {
-    nav_redes: "社交媒体", nav_paises: "国家", nav_envie: "寄送硬币", nav_ranking: "排行榜", voltar_menu: "返回菜单",
+    nav_redes: "社交媒体", nav_paises: "国家", nav_envie: "寄送硬币", nav_ranking: "排行榜", nav_contato: "联系", voltar_menu: "返回菜单",
     h1: "世界硬币，<strong>一国一国收集</strong>。",
-    hero_p: "这是频道的硬币册：每个国家都有一个位置。填满的已经收入册中，硬币按真实尺寸展示。空着的，还在等待来自远方的硬币。",
+    hero_p: "这是频道的硬币册：每个国家都有自己的版块。已有硬币的国家已收入册中。空着的，还在等待来自远方的硬币。",
     tally_lbl: "个国家已收藏", leg_temos: "购买", leg_ganhamos: "获赠", leg_faltam: "未收集",
     social_h2: "每枚硬币一个视频。<strong>关注频道。</strong>",
     abrir_perfil: "打开主页 →", link_definir: "链接即将上线",
     busca: "搜索国家或货币（例如：日本、EUR）",
-    chip_todos: "全部", chip_tem: "已收藏", chip_falta: "未收集",
+    chip_todos: "全部", chip_tem: "已收藏", chip_falta: "空缺",
     g_situacao: "状态", g_continente: "大洲", g_idioma: "语言",
     cont: { "África": "非洲", "Américas": "美洲", "Ásia": "亚洲", "Europa": "欧洲", "Oceania": "大洋洲" },
     conta: "{a} / {b}", vazio: "没有符合筛选条件的国家。",
-    aria_tem: "已收藏", aria_falta: "未收集",
-    pill_temos: "购买", pill_ganhamos: "获赠", pill_falta: "未收集", pill_exemplo: "示例",
+    aria_tem: "已收藏", aria_falta: "空缺",
+    pill_temos: "购买", pill_ganhamos: "获赠", pill_falta: "空缺", pill_exemplo: "示例",
     tamanho_real: "硬币按真实尺寸显示。", ajustar: "根据屏幕校准",
     calib_p: "把一张银行卡贴在屏幕上，拖动滑块，直到矩形与卡片一样大。设置会保存在此浏览器中。",
     cartao: "银行卡（{mm} 毫米）", padrao: "恢复默认", mm: "毫米",
@@ -504,19 +597,19 @@ const T = {
     rodape: "部分购买按钮为联盟链接：通过它们购买，频道会获得佣金，您无需额外付费。尺寸以毫米为单位，依据各硬币的官方规格。"
   },
   hi: {
-    nav_redes: "सोशल मीडिया", nav_paises: "देश", nav_envie: "सिक्का भेजें", nav_ranking: "रैंकिंग", voltar_menu: "मेनू पर वापस जाएँ",
+    nav_redes: "सोशल मीडिया", nav_paises: "देश", nav_envie: "सिक्का भेजें", nav_ranking: "रैंकिंग", nav_contato: "संपर्क", voltar_menu: "मेनू पर वापस जाएँ",
     h1: "दुनिया के सिक्के, <strong>देश दर देश</strong>।",
-    hero_p: "यह चैनल का एल्बम है: हर देश की अपनी जगह है। भरी हुई जगहें संग्रह में हैं, सिक्के असली आकार में। खाली जगहें अब भी विदेशी सिक्कों का इंतज़ार कर रही हैं।",
+    hero_p: "यह चैनल का एल्बम है: हर देश का अपना हिस्सा है। जिन देशों का कोई सिक्का है, वे संग्रह में हैं। खाली देश अब भी विदेशी सिक्कों का इंतज़ार कर रहे हैं।",
     tally_lbl: "देश संग्रह में", leg_temos: "खरीदे", leg_ganhamos: "तोहफ़े में मिले", leg_faltam: "बाकी",
     social_h2: "हर सिक्के पर एक वीडियो। <strong>चैनल फ़ॉलो करें।</strong>",
     abrir_perfil: "प्रोफ़ाइल खोलें →", link_definir: "लिंक जल्द ही",
     busca: "देश या मुद्रा खोजें (जैसे: जापान, EUR)",
-    chip_todos: "सभी", chip_tem: "संग्रह में", chip_falta: "बाकी",
+    chip_todos: "सभी", chip_tem: "संग्रह में", chip_falta: "खाली",
     g_situacao: "स्थिति", g_continente: "महाद्वीप", g_idioma: "भाषा",
     cont: { "África": "अफ़्रीका", "Américas": "अमेरिका", "Ásia": "एशिया", "Europa": "यूरोप", "Oceania": "ओशिनिया" },
     conta: "{b} में से {a}", vazio: "इन फ़िल्टरों से कोई देश नहीं मिला।",
-    aria_tem: "संग्रह में", aria_falta: "बाकी",
-    pill_temos: "खरीदा", pill_ganhamos: "तोहफ़ा", pill_falta: "बाकी", pill_exemplo: "उदाहरण",
+    aria_tem: "संग्रह में", aria_falta: "खाली",
+    pill_temos: "खरीदा", pill_ganhamos: "तोहफ़ा", pill_falta: "खाली", pill_exemplo: "उदाहरण",
     tamanho_real: "सिक्के असली आकार में।", ajustar: "अपनी स्क्रीन के अनुसार सेट करें",
     calib_p: "बैंक कार्ड को स्क्रीन से सटाएँ और स्लाइडर तब तक खिसकाएँ जब तक आयत कार्ड के बराबर न हो जाए। यह सेटिंग इसी ब्राउज़र में सेव रहती है।",
     cartao: "कार्ड ({mm} मिमी)", padrao: "डिफ़ॉल्ट पर लौटें", mm: "मिमी",
@@ -539,6 +632,10 @@ const T = {
     rodape: "कुछ खरीदें बटन एफ़िलिएट लिंक हैं: इनसे खरीदने पर चैनल को कमीशन मिलता है, आपको कोई अतिरिक्त खर्च नहीं। आकार मिलीमीटर में, हर सिक्के के आधिकारिक विनिर्देशों के अनुसार।"
   }
 };
+
+/* Textos da seção Apoie e dos links por moeda (mesma fonte do PDF). */
+const T_APOIO = {"pt": {"nav_apoie": "Apoie", "apoie_h2": "Ajude a encher o álbum. <strong>Apoie o projeto.</strong>", "apoie_lead": "O Pilas de Fora quer preservar o patrimônio numismático do Brasil e do mundo. Cada moeda é uma porta de entrada: pela curiosidade, a gente fala de história, de cultura e de educação financeira, em vídeos curtos e em cinco idiomas.", "pilar_hist_t": "História", "pilar_hist": "Reis, repúblicas, guerras e moedas que deixaram de existir: cada moeda guarda um pedaço do passado.", "pilar_cult_t": "Cultura", "pilar_cult": "Animais, monumentos, heróis e símbolos que cada país escolheu para carregar no bolso.", "pilar_fin_t": "Educação financeira", "pilar_fin": "Inflação, câmbio e o valor das coisas, explicados a partir de uma moeda na mão.", "apoie_quem": "Pessoas e empresas apoiam do mesmo jeito: com dinheiro ou com moedas.", "forma_din_t": "Com dinheiro", "forma_din": "Ajuda a comprar as moedas que faltam, a produzir os vídeos e a manter o site no ar.", "pix_tag": "Chave Pix", "copiar_pix": "Copiar chave", "doar_online": "Doar online", "din_breve": "Os dados para doação estão chegando. Enquanto isso, fale com a gente.", "forma_moe_t": "Com moedas", "forma_moe": "Moedas de qualquer país e de qualquer época, inclusive antigas, comemorativas ou repetidas. Cada uma ganha lugar no álbum e no canal.", "forma_moe_btn": "Como mandar", "niveis_h3": "Níveis de apoio", "niveis_p": "Valem para pessoas e empresas, com dinheiro ou com moedas. O nome só aparece com autorização.", "n_amigo_t": "Amigo do álbum", "n_amigo": "Qualquer valor ou qualquer moeda.", "n_amigo_b": ["Nome no ranking de contribuidores", "Agradecimento nas redes do canal"], "n_moeda_t": "Padrinho de moeda", "n_moeda": "Patrocina uma moeda do álbum.", "n_moeda_b": ["Seu nome ou sua marca junto à moeda, no site", "Menção no vídeo da moeda", "Tudo do nível anterior"], "n_pais_t": "Padrinho de país", "n_pais": "Patrocina o set inteiro de um país.", "n_pais_b": ["Seu nome ou sua marca na página do país", "Menção em todos os vídeos desse país", "Tudo dos níveis anteriores"], "n_mant_t": "Mantenedor", "n_mant": "Apoio mensal ou de maior valor, que mantém o projeto andando.", "n_mant_b": ["Sua marca na seção Apoie e na apresentação do projeto", "Menção fixa nos vídeos, nos cinco idiomas", "Tudo dos níveis anteriores"], "m_aluminio": "Alumínio", "m_bronze": "Bronze", "m_prata": "Prata", "m_ouro": "Ouro", "valor_livre": "Qualquer valor", "valor_combinar": "Valor a combinar", "mant_h3": "Quem mantém o projeto", "contato_h3": "Fale com a gente", "contato_p": "Quer apoiar, patrocinar, ou tirar uma dúvida? Use o canal que preferir ou nosso e-mail abaixo:", "c_email": "E-mail", "c_whats": "WhatsApp", "c_form": "Formulário", "contato_redes": "Por enquanto, o contato é pelas nossas redes, como @pilasdefora.", "ver_redes": "Ver as redes", "pdf_btn": "Baixar a apresentação (PDF)", "status_formacao": "Por enquanto, o Pilas de Fora é um projeto pessoal, mantido por pessoa física, e está se organizando para virar uma fundação. Por isso, as doações ainda não geram recibo para dedução no imposto de renda.", "status_ong": "Fundação sem fins lucrativos · CNPJ {cnpj}", "video_titulo": "Vídeo de apresentação do Pilas de Fora", "moeda_link": "Saiba mais", "moeda_comprar": "Comprar esta moeda", "patrocinada": "Patrocínio: {nome}", "set_patrocinio": "Set patrocinado por {nome}", "pdf_titulo": "Apresentação para apoiadores", "pdf_sub": "As moedas do mundo, país por país.", "pdf_o_que_h": "O que é o Pilas de Fora", "pdf_o_que": "Um canal de vídeos curtos sobre moedas do mundo e um site que funciona como álbum: cada um dos 195 países tem um encaixe, e as moedas aparecem em tamanho real, com o texto de cada vídeo.", "pdf_nums": [["195", "países no álbum"], ["5", "idiomas: português, inglês, espanhol, chinês e hindi"], ["1", "vídeo para cada moeda"], ["4", "redes: YouTube, Instagram, TikTok e Facebook"]], "pdf_missao_h": "Nossa missão", "pdf_porque_h": "Por que apoiar", "pdf_porque": ["Seu nome ou sua marca ligados a educação e cultura, num projeto para todas as idades.", "Alcance em cinco idiomas, no Brasil e fora dele.", "Transparência: todo apoio aparece no ranking público do site, e o nome só aparece com autorização."], "pdf_contato_h": "Vamos conversar", "pdf_redes": "@pilasdefora no YouTube, no Instagram, no TikTok e no Facebook", "pdf_site": "No site, veja a seção Apoie.", "formas_h3": "Como apoiar", "c_redes": "Redes"}, "en": {"nav_apoie": "Support us", "apoie_h2": "Help fill the album. <strong>Support the project.</strong>", "apoie_lead": "Pilas de Fora wants to preserve the numismatic heritage of Brazil and the world. Every coin is a way in: through curiosity, we talk about history, culture and financial literacy, in short videos and in five languages.", "pilar_hist_t": "History", "pilar_hist": "Kings, republics, wars and currencies that no longer exist: every coin holds a piece of the past.", "pilar_cult_t": "Culture", "pilar_cult": "Animals, monuments, heroes and symbols that each country chose to carry in its pocket.", "pilar_fin_t": "Financial literacy", "pilar_fin": "Inflation, exchange rates and the value of things, explained with a coin in your hand.", "apoie_quem": "People and companies support us the same way: with money or with coins.", "forma_din_t": "With money", "forma_din": "It helps us buy the missing coins, produce the videos and keep the site online.", "pix_tag": "Pix key (Brazil)", "copiar_pix": "Copy key", "doar_online": "Donate online", "din_breve": "Donation details are on the way. In the meantime, get in touch.", "forma_moe_t": "With coins", "forma_moe": "Coins from any country and any period, including old, commemorative or duplicate ones. Each one gets a place in the album and on the channel.", "forma_moe_btn": "How to send", "niveis_h3": "Support levels", "niveis_p": "For people and companies alike, with money or with coins. Names are only shown with permission.", "n_amigo_t": "Friend of the album", "n_amigo": "Any amount or any coin.", "n_amigo_b": ["Your name in the contributors ranking", "A thank-you on the channel’s social media"], "n_moeda_t": "Coin sponsor", "n_moeda": "Sponsors one coin in the album.", "n_moeda_b": ["Your name or brand next to the coin on the site", "A mention in the coin’s video", "Everything from the previous level"], "n_pais_t": "Country sponsor", "n_pais": "Sponsors a country’s whole set.", "n_pais_b": ["Your name or brand on the country’s page", "A mention in every video from that country", "Everything from the previous levels"], "n_mant_t": "Patron", "n_mant": "Monthly or larger support that keeps the project going.", "n_mant_b": ["Your brand in the Support section and in the project presentation", "A standing mention in the videos, in all five languages", "Everything from the previous levels"], "m_aluminio": "Aluminium", "m_bronze": "Bronze", "m_prata": "Silver", "m_ouro": "Gold", "valor_livre": "Any amount", "valor_combinar": "Amount to be agreed", "mant_h3": "Who keeps the project going", "contato_h3": "Get in touch", "contato_p": "Want to support us, sponsor, or ask a question? Use whichever channel you prefer or our email below:", "c_email": "Email", "c_whats": "WhatsApp", "c_form": "Form", "contato_redes": "For now, reach us on our social media, as @pilasdefora.", "ver_redes": "See our social media", "pdf_btn": "Download the presentation (PDF)", "status_formacao": "For now, Pilas de Fora is a personal project run by an individual, and it is getting organized to become a foundation. That is why donations do not yet come with a tax-deductible receipt.", "status_ong": "Non-profit foundation · CNPJ {cnpj}", "video_titulo": "Pilas de Fora introduction video", "moeda_link": "Learn more", "moeda_comprar": "Buy this coin", "patrocinada": "Sponsored by {nome}", "set_patrocinio": "Set sponsored by {nome}", "pdf_titulo": "Presentation for supporters", "pdf_sub": "The world’s coins, country by country.", "pdf_o_que_h": "What Pilas de Fora is", "pdf_o_que": "A channel of short videos about the world’s coins, and a website that works like an album: each of the 195 countries has a slot, and the coins are shown at real size, with the text from each video.", "pdf_nums": [["195", "countries in the album"], ["5", "languages: Portuguese, English, Spanish, Chinese and Hindi"], ["1", "video for every coin"], ["4", "networks: YouTube, Instagram, TikTok and Facebook"]], "pdf_missao_h": "Our mission", "pdf_porque_h": "Why support us", "pdf_porque": ["Your name or brand linked to education and culture, in a project for all ages.", "Reach in five languages, in Brazil and abroad.", "Transparency: all support appears in the site’s public ranking, and names are only shown with permission."], "pdf_contato_h": "Let’s talk", "pdf_redes": "@pilasdefora on YouTube, Instagram, TikTok and Facebook", "pdf_site": "On the website, see the Support section.", "formas_h3": "Ways to help", "c_redes": "Social media"}, "es": {"nav_apoie": "Apóyanos", "apoie_h2": "Ayuda a llenar el álbum. <strong>Apoya el proyecto.</strong>", "apoie_lead": "Pilas de Fora quiere preservar el patrimonio numismático de Brasil y del mundo. Cada moneda es una puerta de entrada: a través de la curiosidad, hablamos de historia, de cultura y de educación financiera, en videos cortos y en cinco idiomas.", "pilar_hist_t": "Historia", "pilar_hist": "Reyes, repúblicas, guerras y monedas que dejaron de existir: cada moneda guarda un pedazo del pasado.", "pilar_cult_t": "Cultura", "pilar_cult": "Animales, monumentos, héroes y símbolos que cada país eligió para llevar en el bolsillo.", "pilar_fin_t": "Educación financiera", "pilar_fin": "Inflación, tipo de cambio y el valor de las cosas, explicados a partir de una moneda en la mano.", "apoie_quem": "Personas y empresas apoyan de la misma manera: con dinero o con monedas.", "forma_din_t": "Con dinero", "forma_din": "Ayuda a comprar las monedas que faltan, a producir los videos y a mantener el sitio en línea.", "pix_tag": "Clave Pix (Brasil)", "copiar_pix": "Copiar clave", "doar_online": "Donar en línea", "din_breve": "Los datos para donar están por llegar. Mientras tanto, escríbenos.", "forma_moe_t": "Con monedas", "forma_moe": "Monedas de cualquier país y de cualquier época, incluso antiguas, conmemorativas o repetidas. Cada una tiene su lugar en el álbum y en el canal.", "forma_moe_btn": "Cómo enviar", "niveis_h3": "Niveles de apoyo", "niveis_p": "Valen para personas y empresas, con dinero o con monedas. El nombre solo aparece con autorización.", "n_amigo_t": "Amigo del álbum", "n_amigo": "Cualquier monto o cualquier moneda.", "n_amigo_b": ["Tu nombre en el ranking de colaboradores", "Agradecimiento en las redes del canal"], "n_moeda_t": "Padrino de moneda", "n_moeda": "Patrocina una moneda del álbum.", "n_moeda_b": ["Tu nombre o tu marca junto a la moneda, en el sitio", "Mención en el video de la moneda", "Todo lo del nivel anterior"], "n_pais_t": "Padrino de país", "n_pais": "Patrocina el set completo de un país.", "n_pais_b": ["Tu nombre o tu marca en la página del país", "Mención en todos los videos de ese país", "Todo lo de los niveles anteriores"], "n_mant_t": "Mecenas", "n_mant": "Apoyo mensual o de mayor valor, que mantiene el proyecto en marcha.", "n_mant_b": ["Tu marca en la sección Apóyanos y en la presentación del proyecto", "Mención fija en los videos, en los cinco idiomas", "Todo lo de los niveles anteriores"], "m_aluminio": "Aluminio", "m_bronze": "Bronce", "m_prata": "Plata", "m_ouro": "Oro", "valor_livre": "Cualquier monto", "valor_combinar": "Monto a convenir", "mant_h3": "Quiénes mantienen el proyecto", "contato_h3": "Escríbenos", "contato_p": "¿Quieres apoyar, patrocinar o tienes alguna duda? Usa el canal que prefieras o nuestro correo abajo:", "c_email": "Correo", "c_whats": "WhatsApp", "c_form": "Formulario", "contato_redes": "Por ahora, el contacto es por nuestras redes, como @pilasdefora.", "ver_redes": "Ver las redes", "pdf_btn": "Descargar la presentación (PDF)", "status_formacao": "Por ahora, Pilas de Fora es un proyecto personal, a cargo de una persona física, y se está organizando para convertirse en una fundación. Por eso, las donaciones todavía no generan recibo para deducir impuestos.", "status_ong": "Fundación sin fines de lucro · CNPJ {cnpj}", "video_titulo": "Video de presentación de Pilas de Fora", "moeda_link": "Más información", "moeda_comprar": "Comprar esta moneda", "patrocinada": "Patrocinio: {nome}", "set_patrocinio": "Set patrocinado por {nome}", "pdf_titulo": "Presentación para colaboradores", "pdf_sub": "Las monedas del mundo, país por país.", "pdf_o_que_h": "Qué es Pilas de Fora", "pdf_o_que": "Un canal de videos cortos sobre monedas del mundo y un sitio que funciona como álbum: cada uno de los 195 países tiene su hueco, y las monedas aparecen a tamaño real, con el texto de cada video.", "pdf_nums": [["195", "países en el álbum"], ["5", "idiomas: portugués, inglés, español, chino e hindi"], ["1", "video para cada moneda"], ["4", "redes: YouTube, Instagram, TikTok y Facebook"]], "pdf_missao_h": "Nuestra misión", "pdf_porque_h": "Por qué apoyar", "pdf_porque": ["Tu nombre o tu marca ligados a la educación y la cultura, en un proyecto para todas las edades.", "Alcance en cinco idiomas, en Brasil y fuera de él.", "Transparencia: todo apoyo aparece en el ranking público del sitio, y el nombre solo aparece con autorización."], "pdf_contato_h": "Hablemos", "pdf_redes": "@pilasdefora en YouTube, Instagram, TikTok y Facebook", "pdf_site": "En el sitio, mira la sección Apóyanos.", "formas_h3": "Cómo apoyar", "c_redes": "Redes"}, "zh": {"nav_apoie": "支持我们", "apoie_h2": "帮我们填满硬币册。<strong>支持这个项目。</strong>", "apoie_lead": "Pilas de Fora 希望保护巴西和世界的钱币遗产。每一枚硬币都是一个入口：借着好奇心，我们用五种语言的短视频讲述历史、文化和理财知识。", "pilar_hist_t": "历史", "pilar_hist": "国王、共和国、战争，以及已经消失的货币：每一枚硬币都保存着一段过去。", "pilar_cult_t": "文化", "pilar_cult": "动物、古迹、英雄和象征：每个国家都选择把它们放进人们的口袋。", "pilar_fin_t": "理财知识", "pilar_fin": "通货膨胀、汇率和事物的价值，从手中的一枚硬币讲起。", "apoie_quem": "个人和企业都可以用同样的方式支持我们：捐款或捐赠硬币。", "forma_din_t": "捐款", "forma_din": "帮助我们购买缺少的硬币、制作视频，并维持网站运行。", "pix_tag": "Pix 收款码（巴西）", "copiar_pix": "复制收款码", "doar_online": "在线捐款", "din_breve": "捐款方式即将公布。在此之前，欢迎与我们联系。", "forma_moe_t": "捐赠硬币", "forma_moe": "任何国家、任何年代的硬币都欢迎，包括旧币、纪念币或重复的硬币。每一枚都会在硬币册和频道中占有一席之地。", "forma_moe_btn": "如何寄送", "niveis_h3": "支持等级", "niveis_p": "个人和企业均适用，可以捐款或捐赠硬币。只有获得授权才会公开名称。", "n_amigo_t": "硬币册之友", "n_amigo": "任意金额或任意硬币。", "n_amigo_b": ["名字列入贡献者排行榜", "在频道社交媒体上致谢"], "n_moeda_t": "硬币赞助人", "n_moeda": "赞助硬币册中的一枚硬币。", "n_moeda_b": ["您的名字或品牌显示在网站上该硬币旁", "在该硬币的视频中提及", "包含上一等级的全部回报"], "n_pais_t": "国家赞助人", "n_pais": "赞助一个国家的整套硬币。", "n_pais_b": ["您的名字或品牌显示在该国家的页面上", "在该国家的所有视频中提及", "包含以上等级的全部回报"], "n_mant_t": "长期支持者", "n_mant": "每月支持或较大金额的支持，让项目持续运转。", "n_mant_b": ["您的品牌出现在“支持我们”栏目和项目介绍中", "以五种语言在视频中固定提及", "包含以上等级的全部回报"], "m_aluminio": "铝", "m_bronze": "青铜", "m_prata": "银", "m_ouro": "金", "valor_livre": "任意金额", "valor_combinar": "金额面议", "mant_h3": "长期支持者", "contato_h3": "联系我们", "contato_p": "想支持我们、赞助，或者有任何问题？请选择您方便的渠道，或使用下方的电子邮件：", "c_email": "电子邮件", "c_whats": "WhatsApp", "c_form": "表单", "contato_redes": "目前请通过我们的社交媒体联系：@pilasdefora。", "ver_redes": "查看社交媒体", "pdf_btn": "下载项目介绍（PDF）", "status_formacao": "目前，Pilas de Fora 是由个人运营的项目，正在筹备成为基金会。因此，捐款暂时无法开具可抵税的收据。", "status_ong": "非营利基金会 · CNPJ {cnpj}", "video_titulo": "Pilas de Fora 介绍视频", "moeda_link": "了解更多", "moeda_comprar": "购买这枚硬币", "patrocinada": "赞助：{nome}", "set_patrocinio": "本套硬币由 {nome} 赞助", "pdf_titulo": "致支持者的项目介绍", "pdf_sub": "世界硬币，一国一国收集。", "pdf_o_que_h": "Pilas de Fora 是什么", "pdf_o_que": "一个讲述世界硬币的短视频频道，加上一个像硬币册一样的网站：195 个国家各有一个位置，硬币按真实尺寸展示，并附有每个视频的文字。", "pdf_nums": [["195", "个国家收入硬币册"], ["5", "种语言：葡萄牙语、英语、西班牙语、中文和印地语"], ["1", "枚硬币一个视频"], ["4", "个平台：YouTube、Instagram、TikTok 和 Facebook"]], "pdf_missao_h": "我们的使命", "pdf_porque_h": "为什么支持我们", "pdf_porque": ["您的名字或品牌与教育和文化联系在一起，项目适合所有年龄段。", "五种语言的传播，覆盖巴西和海外。", "公开透明：所有支持都会显示在网站的公开排行榜上，名称只在获得授权后公开。"], "pdf_contato_h": "欢迎联系", "pdf_redes": "YouTube、Instagram、TikTok 和 Facebook 上的 @pilasdefora", "pdf_site": "在网站上，请查看“支持我们”栏目。", "formas_h3": "支持方式", "c_redes": "社交媒体"}, "hi": {"nav_apoie": "सहयोग करें", "apoie_h2": "एल्बम भरने में मदद करें। <strong>इस प्रोजेक्ट का साथ दें।</strong>", "apoie_lead": "पिलास दे फ़ोरा ब्राज़ील और दुनिया की मुद्रा-धरोहर को सहेजना चाहता है। हर सिक्का एक दरवाज़ा है: जिज्ञासा के सहारे हम इतिहास, संस्कृति और वित्तीय साक्षरता की बात करते हैं, छोटे वीडियो में और पाँच भाषाओं में।", "pilar_hist_t": "इतिहास", "pilar_hist": "राजा, गणराज्य, युद्ध और ऐसी मुद्राएँ जो अब नहीं रहीं: हर सिक्का अतीत का एक टुकड़ा सँजोए है।", "pilar_cult_t": "संस्कृति", "pilar_cult": "जानवर, स्मारक, नायक और प्रतीक, जिन्हें हर देश ने अपनी जेब में रखने के लिए चुना।", "pilar_fin_t": "वित्तीय साक्षरता", "pilar_fin": "महँगाई, विनिमय दर और चीज़ों का मूल्य, हाथ में रखे एक सिक्के से समझाया गया।", "apoie_quem": "लोग और कंपनियाँ एक ही तरह से सहयोग करते हैं: पैसे से या सिक्कों से।", "forma_din_t": "पैसे से", "forma_din": "इससे बाकी सिक्के खरीदने, वीडियो बनाने और साइट चालू रखने में मदद मिलती है।", "pix_tag": "Pix की (ब्राज़ील)", "copiar_pix": "की कॉपी करें", "doar_online": "ऑनलाइन दान करें", "din_breve": "दान की जानकारी जल्द ही आएगी। तब तक हमसे संपर्क करें।", "forma_moe_t": "सिक्कों से", "forma_moe": "किसी भी देश और किसी भी दौर के सिक्के, पुराने, स्मारक या दोहराए हुए भी। हर सिक्के को एल्बम और चैनल में जगह मिलती है।", "forma_moe_btn": "कैसे भेजें", "niveis_h3": "सहयोग के स्तर", "niveis_p": "लोगों और कंपनियों दोनों के लिए, पैसे से या सिक्कों से। नाम केवल अनुमति मिलने पर ही दिखाया जाता है।", "n_amigo_t": "एल्बम का दोस्त", "n_amigo": "कोई भी राशि या कोई भी सिक्का।", "n_amigo_b": ["योगदानकर्ताओं की रैंकिंग में आपका नाम", "चैनल के सोशल मीडिया पर धन्यवाद"], "n_moeda_t": "सिक्का प्रायोजक", "n_moeda": "एल्बम के एक सिक्के को प्रायोजित करें।", "n_moeda_b": ["साइट पर सिक्के के साथ आपका नाम या ब्रांड", "सिक्के के वीडियो में उल्लेख", "पिछले स्तर की सभी सुविधाएँ"], "n_pais_t": "देश प्रायोजक", "n_pais": "किसी देश के पूरे सेट को प्रायोजित करें।", "n_pais_b": ["देश के पेज पर आपका नाम या ब्रांड", "उस देश के सभी वीडियो में उल्लेख", "पिछले स्तरों की सभी सुविधाएँ"], "n_mant_t": "संरक्षक", "n_mant": "मासिक या बड़ा सहयोग, जो प्रोजेक्ट को आगे बढ़ाता रहता है।", "n_mant_b": ["सहयोग वाले सेक्शन और प्रोजेक्ट प्रस्तुति में आपका ब्रांड", "पाँचों भाषाओं के वीडियो में स्थायी उल्लेख", "पिछले स्तरों की सभी सुविधाएँ"], "m_aluminio": "एल्यूमिनियम", "m_bronze": "कांस्य", "m_prata": "रजत", "m_ouro": "स्वर्ण", "valor_livre": "कोई भी राशि", "valor_combinar": "राशि आपसी सहमति से", "mant_h3": "प्रोजेक्ट के संरक्षक", "contato_h3": "हमसे बात करें", "contato_p": "सहयोग करना है, प्रायोजन करना है, या कोई सवाल है? जो चैनल आपको ठीक लगे, उसे चुनें या नीचे दिए ईमेल पर लिखें:", "c_email": "ईमेल", "c_whats": "WhatsApp", "c_form": "फ़ॉर्म", "contato_redes": "फ़िलहाल हमसे सोशल मीडिया पर @pilasdefora के ज़रिए संपर्क करें।", "ver_redes": "सोशल मीडिया देखें", "pdf_btn": "प्रस्तुति डाउनलोड करें (PDF)", "status_formacao": "फ़िलहाल पिलास दे फ़ोरा एक व्यक्ति द्वारा चलाया जा रहा निजी प्रोजेक्ट है, और एक फ़ाउंडेशन बनने की तैयारी कर रहा है। इसलिए अभी दान पर कर-कटौती की रसीद नहीं मिलती।", "status_ong": "गैर-लाभकारी फ़ाउंडेशन · CNPJ {cnpj}", "video_titulo": "पिलास दे फ़ोरा का परिचय वीडियो", "moeda_link": "और जानें", "moeda_comprar": "यह सिक्का खरीदें", "patrocinada": "प्रायोजक: {nome}", "set_patrocinio": "{nome} द्वारा प्रायोजित सेट", "pdf_titulo": "सहयोगियों के लिए प्रस्तुति", "pdf_sub": "दुनिया के सिक्के, देश दर देश।", "pdf_o_que_h": "पिलास दे फ़ोरा क्या है", "pdf_o_que": "दुनिया के सिक्कों पर छोटे वीडियो का एक चैनल, और एक साइट जो एल्बम की तरह काम करती है: 195 देशों में से हर एक की अपनी जगह है, और सिक्के असली आकार में, हर वीडियो के टेक्स्ट के साथ दिखते हैं।", "pdf_nums": [["195", "देश एल्बम में"], ["5", "भाषाएँ: पुर्तगाली, अंग्रेज़ी, स्पेनिश, चीनी और हिंदी"], ["1", "वीडियो हर सिक्के पर"], ["4", "प्लेटफ़ॉर्म: YouTube, Instagram, TikTok और Facebook"]], "pdf_missao_h": "हमारा मिशन", "pdf_porque_h": "सहयोग क्यों करें", "pdf_porque": ["आपका नाम या ब्रांड शिक्षा और संस्कृति से जुड़ता है, ऐसे प्रोजेक्ट में जो हर उम्र के लिए है।", "पाँच भाषाओं में पहुँच, ब्राज़ील में और बाहर भी।", "पारदर्शिता: हर सहयोग साइट की सार्वजनिक रैंकिंग में दिखता है, और नाम केवल अनुमति से दिखाया जाता है।"], "pdf_contato_h": "आइए बात करें", "pdf_redes": "YouTube, Instagram, TikTok और Facebook पर @pilasdefora", "pdf_site": "साइट पर सहयोग वाला सेक्शन देखें।", "formas_h3": "सहयोग के तरीके", "c_redes": "सोशल मीडिया"}};
+Object.keys(T_APOIO).forEach(l => Object.assign(T[l], T_APOIO[l]));
 
 /* ============================================================
    DAQUI PARA BAIXO, O SITE
@@ -610,13 +707,16 @@ function textosFixos() {
   document.getElementById("copied").textContent = "";
   document.getElementById("langs").innerHTML = IDIOMAS.map(i =>
     '<button type="button" data-lang="' + i.id + '" lang="' + i.locale + '" aria-label="' + i.nome + '" aria-pressed="' + (i.id === estado.lang) + '">' + i.rotulo + '</button>').join("");
-  document.getElementById("nets").innerHTML = REDES.map(r => {
+  /* cada perfil pode ter uma lista "idiomas"; sem ela, aparece em todos */
+  const htmlRedes = REDES.filter(r => !r.idiomas || r.idiomas.includes(estado.lang)).map(r => {
     const icone = ICONES[String(r.rede).trim().toLowerCase()] || '<span class="sem-icone">' + esc(r.rede) + '</span>';
     const rotulo = esc(r.rede + (r.usuario ? " " + r.usuario : ""));
     return r.url
       ? '<a class="net" href="' + esc(r.url) + '" target="_blank" rel="noopener" aria-label="' + rotulo + '" title="' + rotulo + '">' + icone + '</a>'
       : '<span class="net soon" role="img" aria-label="' + rotulo + ' – ' + t("link_definir") + '" title="' + rotulo + ' – ' + t("link_definir") + '">' + icone + '</span>';
   }).join("");
+  document.getElementById("nets").innerHTML = htmlRedes;
+  document.getElementById("nets-topo").innerHTML = htmlRedes;
 }
 
 function contagem() {
@@ -725,7 +825,9 @@ function painel(p) {
     '<h3 id="p-title">' + esc(nome) +
     (s ? '' : '<span class="pill missing">' + t("pill_falta") + '</span>') +
     (s && s.exemplo ? '<span class="pill exemplo">' + t("pill_exemplo") + '</span>' : "") + '</h3>' +
-    '<div class="meta">' + meta + '</div></div></div>';
+    '<div class="meta">' + meta + '</div>' +
+    (s && s.patrocinio && s.patrocinio.nome ? '<div class="set-patro">' + t("set_patrocinio", { nome: nomeLink(s.patrocinio) }) + '</div>' : '') +
+    '</div></div>';
 
   if (s) {
     h += '<div class="tray" id="coins">' + linhaDoTempo(s.moedas) + '</div>' +
@@ -734,17 +836,25 @@ function painel(p) {
       '<div class="card-outline" id="card" aria-hidden="true">' + t("cartao", { mm: fmtMm(CARTAO_MM) }) + '</div>' +
       '<label for="escala" class="row"><input id="escala" type="range" min="2" max="9" step="0.01" value="' + pxPorMm + '" aria-label="' + t("ajustar") + '"></label>' +
       '<div class="row"><button class="btn ghost" id="reset-calib" type="button">' + t("padrao") + '</button></div></div>';
-    const comTexto = ordenar(s.moedas).filter(m => tr(m.texto));
+    const urlCompra = m => (m.compra && m.compra.url) || "";
+    const comTexto = ordenar(s.moedas).filter(m => tr(m.texto) || tr(m.link) || urlCompra(m) || (m.patrocinio && m.patrocinio.nome));
     if (comTexto.length) {
-      h += '<div class="textos">' + comTexto.map(m =>
-        '<article class="txt"><h4>' + esc(tr(m.valor)) + ' <span class="ano">' + m.ano + '</span>' +
-        (m.especial ? ' <span class="tag special">' + t("pill_especial") + '</span>' : '') + '</h4>' +
-        '<p>' + esc(tr(m.texto)) + '</p></article>').join("") + '</div>';
+      h += '<div class="textos">' + comTexto.map(m => {
+        const links = (tr(m.link) ? '<a class="mais" href="' + esc(tr(m.link)) + '" target="_blank" rel="noopener">' + t("moeda_link") + ' ↗</a>' : '') +
+          (urlCompra(m) ? '<a class="btn sm" href="' + esc(urlCompra(m)) + '" target="_blank" rel="noopener sponsored">' + t("moeda_comprar") + '</a>' : '');
+        return '<article class="txt"><h4>' + esc(tr(m.valor)) + ' <span class="ano">' + m.ano + '</span>' +
+          (m.especial ? ' <span class="tag special">' + t("pill_especial") + '</span>' : '') +
+          (m.patrocinio && m.patrocinio.nome ? ' <span class="patro">' + t("patrocinada", { nome: nomeLink(m.patrocinio) }) + '</span>' : '') + '</h4>' +
+          (tr(m.texto) ? '<p>' + esc(tr(m.texto)) + '</p>' : '') +
+          (links ? '<div class="txt-links">' + links + '</div>' : '') + '</article>';
+      }).join("") + '</div>';
     }
-    if (s.compra) {
-      h += s.compra.url
-        ? '<div class="buy"><a class="btn" href="' + esc(s.compra.url) + '" target="_blank" rel="noopener sponsored">' + t("comprar") + '</a><small>' + t("afiliado") + '</small></div>'
-        : '<div class="buy"><button class="btn" type="button" disabled>' + t("comprar") + '</button><small>' + t("afiliado_breve") + '</small></div>';
+    const algumaMoeda = s.moedas.some(urlCompra);
+    const urlSet = s.compra && s.compra.url;
+    if (urlSet || algumaMoeda) {
+      h += '<div class="buy">' + (urlSet ? '<a class="btn" href="' + esc(urlSet) + '" target="_blank" rel="noopener sponsored">' + t("comprar") + '</a>' : '') + '<small>' + t("afiliado") + '</small></div>';
+    } else if (s.compra) {
+      h += '<div class="buy"><button class="btn" type="button" disabled>' + t("comprar") + '</button><small>' + t("afiliado_breve") + '</small></div>';
     }
   } else {
     h += '<div class="want"><div class="slots" aria-hidden="true"><i></i><i></i><i></i></div><div>' +
@@ -794,23 +904,42 @@ function mudarIdioma(id, salvar) {
   chipsContinente();
   lista();
   ranking();
+  apoie();
   if (aberto) { document.getElementById("panel").innerHTML = painel(aberto); desenharCartao(); }
 }
 
-/* Endereços aceitos: #japao, #en, #en-japao, #redes, #paises, #envie */
+/* Endereços aceitos: #japao, #en, #en-japao, #paises, #apoie, #envie, #ranking, #contato, #redes, #fale */
 function rota() {
   let h = decodeURIComponent(location.hash.slice(1));
   const m = h.match(/^(pt|en|es|zh|hi)(?:-(.+))?$/);
   if (m) { if (m[1] !== estado.lang) mudarIdioma(m[1], true); h = m[2] || ""; }
   const p = porSlug[h];
-  if (p) { abrir(p); return; }
+  if (p) { mostrarAba("paises"); abrir(p); return; }
   fechar(false);
-  if (h === "envie" || h === "paises" || h === "redes" || h === "ranking") { const el = document.getElementById(h); if (el) el.scrollIntoView(); }
+  if (ABA_DE[h]) { mostrarAba(ABA_DE[h]); if (h !== ABA_DE[h]) { const el = document.getElementById(h); if (el) el.scrollIntoView(); } else window.scrollTo(0, 0); }
+  else mostrarAba(abaAtual);
 }
 
 /* Rola até a seção sem animação (a rolagem animada falha em alguns visualizadores).
    Tenta pela janela; se a página não se mexeu, usa o scrollIntoView do próprio elemento. */
+/* Cada endereço do site pertence a uma aba do menu. */
+const ABA_DE = { paises: "paises", apoie: "apoie", envie: "envie", ranking: "ranking", contato: "contato", redes: "contato", fale: "contato" };
+let abaAtual = "paises";
+function mostrarAba(aba) {
+  abaAtual = aba;
+  document.querySelectorAll("[data-aba]").forEach(el => { el.hidden = el.dataset.aba !== aba; });
+  document.querySelectorAll("[data-aba-link]").forEach(a => {
+    if (a.dataset.abaLink === aba) a.setAttribute("aria-current", "page"); else a.removeAttribute("aria-current");
+  });
+}
+function abrirAba(aba, alvo) {
+  mostrarAba(aba);
+  history.replaceState(null, "", "#" + (alvo && alvo !== aba ? alvo : aba));
+  if (alvo && alvo !== aba && alvo !== "redes") irPara(alvo); else window.scrollTo(0, 0);
+}
+
 function irPara(id) {
+  if (ABA_DE[id] && ABA_DE[id] !== abaAtual) { abrirAba(ABA_DE[id], id); return; }
   const el = document.getElementById(id);
   if (!el) return;
   const raiz = document.scrollingElement || document.documentElement;
@@ -826,7 +955,77 @@ function atualizarMoedas() {
   desenharCartao();
 }
 
-let abaRanking = "dinheiro";
+
+/* Nome com link opcional (patrocínio de moeda, de país e mantenedores) */
+const nomeLink = o => o.url ? '<a href="' + esc(o.url) + '" target="_blank" rel="noopener sponsored">' + esc(o.nome) + '</a>' : esc(o.nome);
+const PDF_APOIE = l => "apresentacao/pilasdefora-apoie-" + l + ".pdf";
+const ICO = {
+  email: '<svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2" fill="none" stroke="currentColor" stroke-width="2"/><path d="M3.5 6.5l8.5 7 8.5-7" fill="none" stroke="currentColor" stroke-width="2"/></svg>',
+  whats: '<svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20l1.3-3.9A8.5 8.5 0 1 1 8 19z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>',
+  form: '<svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="3" width="14" height="18" rx="2" fill="none" stroke="currentColor" stroke-width="2"/><path d="M9 8h6M9 12h6M9 16h4" stroke="currentColor" stroke-width="2"/></svg>',
+  pdf: '<svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v11M7 10l5 5 5-5M5 20h14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>'
+};
+function videoInfo(url) {
+  if (!url) return null;
+  const m = String(url).match(/(?:youtu\.be\/|v=|\/shorts\/|\/embed\/|\/live\/)([A-Za-z0-9_-]{11})/);
+  return m ? { id: m[1], vertical: /\/shorts\//.test(url) } : null;
+}
+const MOSTRAR_NIVEIS = false;
+function apoie() {
+  const a = APOIO;
+  const v = videoInfo(a.video);
+  const val = a.valores || {};
+  const lista = k => '<ul>' + t(k).map(x => '<li>' + esc(x) + '</li>').join("") + '</ul>';
+  const niveis = [
+    { k: "amigo", metal: "aluminio", rot: "m_aluminio", livre: true },
+    { k: "moeda", metal: "cobre", rot: "m_bronze" },
+    { k: "pais", metal: "prata", rot: "m_prata" },
+    { k: "mant", metal: "ouro", rot: "m_ouro", val: "mantenedor", topo: true }
+  ];
+  let h = '<div class="ap-top' + (v ? ' com-video' + (v.vertical ? ' vertical' : '') : '') + '"><div>' +
+    '<p class="ap-lead">' + t("apoie_lead") + '</p>' +
+    '<div class="pilares">' + ["hist", "cult", "fin"].map(p => '<div class="pilar"><h4>' + t("pilar_" + p + "_t") + '</h4><p>' + t("pilar_" + p) + '</p></div>').join("") + '</div></div>' +
+    (v ? '<div class="ap-video' + (v.vertical ? ' vertical' : '') + '"><iframe src="https://www.youtube-nocookie.com/embed/' + v.id + '" title="' + esc(t("video_titulo")) + '" loading="lazy" allow="encrypted-media; picture-in-picture; fullscreen" allowfullscreen></iframe></div>' : '') +
+    '</div>' +
+    '<p class="ap-status">' + (a.cnpj ? esc(t("status_ong", { cnpj: a.cnpj })) : t("status_formacao")) + '</p>';
+
+  // Formas de apoiar
+  const temDin = a.pix || a.doacao_url;
+  h += '<h3 class="ap-h3">' + t("formas_h3") + '</h3><p class="ap-sub">' + t("apoie_quem") + '</p><div class="formas">' +
+    '<div class="forma"><h4>' + t("forma_din_t") + '</h4><p>' + t("forma_din") + '</p>' +
+    (a.pix ? '<div class="pix"><div class="tag">' + t("pix_tag") + '</div><code id="pix-chave">' + esc(a.pix) + '</code><button class="btn ghost" id="copy-pix" type="button">' + t("copiar_pix") + '</button><span class="copied" id="pix-ok" role="status"></span></div>' : '') +
+    (a.doacao_url ? '<div class="acoes"><a class="btn" href="' + esc(a.doacao_url) + '" target="_blank" rel="noopener">' + t("doar_online") + '</a></div>' : '') +
+    (temDin ? '' : '<p>' + t("din_breve") + '</p><div class="acoes"><button class="btn ghost" type="button" data-scroll="fale">' + t("contato_h3") + '</button></div>') +
+    '</div>' +
+    '<div class="forma"><h4>' + t("forma_moe_t") + '</h4><p>' + t("forma_moe") + '</p><div class="acoes"><button class="btn" type="button" data-scroll="envie">' + t("forma_moe_btn") + '</button></div></div></div>';
+
+  // Níveis (escondidos por enquanto: mude MOSTRAR_NIVEIS para true para voltar)
+  if (MOSTRAR_NIVEIS) h += '<h3 class="ap-h3">' + t("niveis_h3") + '</h3><p class="ap-sub">' + t("niveis_p") + '</p><div class="niveis">' +
+    niveis.map(n => {
+      const preco = val[n.val || n.k] || (n.livre ? t("valor_livre") : t("valor_combinar"));
+      return '<div class="nivel' + (n.topo ? ' topo-nivel' : '') + '"><div class="metal"><i style="background:' + METAIS[n.metal] + '"></i>' + t(n.rot) + '</div>' +
+        '<h4>' + t("n_" + n.k + "_t") + '</h4><p class="desc">' + t("n_" + n.k) + '</p><p class="preco">' + esc(preco) + '</p>' + lista("n_" + n.k + "_b") + '</div>';
+    }).join("") + '</div>';
+
+  // Mantenedores
+  const mant = (a.mantenedores || []).filter(x => x && x.nome);
+  if (mant.length) h += '<h3 class="ap-h3">' + t("mant_h3") + '</h3><ul class="mantenedores">' + mant.map(x => '<li>' + nomeLink(x) + '</li>').join("") + '</ul>';
+
+  // Contato
+  const zap = String(a.whatsapp || "").replace(/\D/g, "");
+  const canais = (a.email ? '<a class="btn" href="mailto:' + esc(a.email) + '">' + ICO.email + t("c_email") + '</a>' : '') +
+    (zap ? '<a class="btn" href="https://wa.me/' + zap + '" target="_blank" rel="noopener">' + ICO.whats + t("c_whats") + '</a>' : '') +
+    (a.formulario ? '<a class="btn" href="' + esc(a.formulario) + '" target="_blank" rel="noopener">' + ICO.form + t("c_form") + '</a>' : '');
+  h += '<div class="pdf-row"><a class="btn ghost" data-pdf href="' + PDF_APOIE(estado.lang) + '" target="_blank" rel="noopener" download>' + ICO.pdf + t("pdf_btn") + '</a></div>';
+  document.getElementById("apoie-corpo").innerHTML = h;
+
+  // Fale com a gente (aba Contato)
+  document.getElementById("contato-corpo").innerHTML =
+    '<h3 class="ap-h3">' + t("contato_h3") + '</h3><p class="ap-sub">' + t("contato_p") + '</p>' +
+    (canais ? '<div class="contato">' + canais + '</div>' : '<div class="contato"><p class="contato-redes">' + t("contato_redes") + '</p></div>');
+}
+
+let abaRanking = "moedas";
 function quem(c) {
   const p = c.pais && porId[c.pais];
   return '<span class="quem"><span class="nome">' + esc(c.nome) + '</span>' +
@@ -885,7 +1084,18 @@ function ranking() {
   pn.innerHTML = rankingHTML();
 }
 
+/* No visualizador de artifacts, links de download não funcionam: lá o PDF é entregue pelo recurso "downloads".
+   No GitHub Pages, claude.use não existe e o link normal baixa o arquivo. */
+let baixar = null;
+try { if (window.claude && claude.use) claude.use("downloads").then(d => { baixar = d; }, () => {}); } catch (err) {}
 document.addEventListener("click", e => {
+  const pdf = e.target.closest("[data-pdf]");
+  if (pdf && baixar) {
+    e.preventDefault();
+    const href = pdf.getAttribute("href");
+    fetch(href).then(r => r.blob()).then(b => baixar.save({ filename: href.split("/").pop(), data: b })).catch(() => {});
+    return;
+  }
   const fl = e.target.closest(".coin.flip");
   if (fl) { fl.classList.toggle("virada"); return; }
   const tb = e.target.closest("[data-tab]");
@@ -898,12 +1108,20 @@ document.addEventListener("click", e => {
   if (st) { estado.st = st.dataset.st; document.querySelectorAll("[data-st]").forEach(b => b.setAttribute("aria-pressed", b === st)); lista(); return; }
   const ct = e.target.closest("[data-cont]");
   if (ct) { estado.cont = ct.dataset.cont; document.querySelectorAll("[data-cont]").forEach(b => b.setAttribute("aria-pressed", b === ct)); lista(); return; }
+  const al = e.target.closest("[data-aba-link]");
+  if (al) { e.preventDefault(); abrirAba(al.dataset.abaLink); return; }
   const sc = e.target.closest("[data-scroll]");
   if (sc) { e.preventDefault(); irPara(sc.dataset.scroll); return; }
   if (e.target.id === "fechar" || e.target.id === "overlay") { fechar(true); return; }
-  if (e.target.id === "ir-envie") { fechar(true); irPara("envie"); return; }
+  if (e.target.id === "ir-envie") { fechar(true); abrirAba("envie"); return; }
   if (e.target.id === "abrir-calib") { document.getElementById("calib").classList.toggle("open"); desenharCartao(); return; }
   if (e.target.id === "reset-calib") { pxPorMm = 96 / 25.4; store.set("pdf-pxmm", pxPorMm); atualizarMoedas(); document.getElementById("escala").value = pxPorMm; return; }
+  if (e.target.id === "copy-pix") {
+    const ok = () => { document.getElementById("pix-ok").textContent = t("copiado"); };
+    const falha = () => { document.getElementById("pix-ok").textContent = t("copiar_falha"); };
+    try { navigator.clipboard.writeText(APOIO.pix).then(ok, falha); } catch (err) { falha(); }
+    return;
+  }
   if (e.target.id === "copy-addr") {
     const txt = ENDERECO.join("\n");
     const ok = () => { document.getElementById("copied").textContent = t("copiado"); };
@@ -920,7 +1138,7 @@ document.addEventListener("keydown", e => {
   if (e.key === "Escape") fechar(true);
   if ((e.key === "Enter" || e.key === " ") && e.target.matches && e.target.matches(".coin.flip")) { e.preventDefault(); e.target.classList.toggle("virada"); }
   if (e.target.matches && e.target.matches("[data-tab]") && (e.key === "ArrowRight" || e.key === "ArrowLeft")) {
-    const abas = ["dinheiro", "moedas", "acervo"];
+    const abas = ["moedas", "acervo", "dinheiro"];
     abaRanking = abas[(abas.indexOf(abaRanking) + (e.key === "ArrowRight" ? 1 : 2)) % 3]; ranking(); document.getElementById("tab-" + abaRanking).focus();
   }
 });
@@ -932,6 +1150,7 @@ contagem();
 chipsContinente();
 lista();
 ranking();
+apoie();
 rota();
 </script>
 </body>
